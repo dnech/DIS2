@@ -1,0 +1,7 @@
+{
+	"info":"Config module Direct",
+	"namespace":"Direct",
+	"api_url": "direct/api",
+	"direct_url": "direct/rpc",
+	"trace": false
+}

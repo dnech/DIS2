@@ -1,0 +1,6 @@
+{
+	"info":"Config module Files",
+	"download": "/files/:category/:file",
+	"upload": "/cfg/upload/",
+	"trace": false
+}

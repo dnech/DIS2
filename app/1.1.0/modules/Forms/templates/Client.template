@@ -1,0 +1,97 @@
+<div id="Interface_{ID}">
+{CONTENT}
+</div>
+<script>
+$('#Interface_{ID}').data('code', (function(){
+
+	/* Default function */
+	var onInit, onDestroy;
+	
+	/* This Interface */
+	var Interface = {};
+	var Elements = Interface.Elements = {};
+	var Timers   = Interface.Timers = {};
+
+	Interface.id = '{ID}';
+	Interface.name = 'Interface_{ID}';
+	Interface.data = {DATA}
+	
+	/* Elements */
+	/* Блок генерируемый автоматически из списка элементов */
+	$('#Interface_{ID} [Element]').each(function(i,elem) {
+		var Element = $(this).attr('Element');
+		Elements[Element] = $(this);
+    });
+	//console.log('Элементы формы', Elements);
+
+	/* Server */
+	/* Блок генерируемый автоматически из списка экспортируемых сервером функций */
+	var Server = Interface.Server = Direct.Forms[Interface.id] = {DIRECT};
+
+/*=====================================================================================*/
+{CODE}
+/*=====================================================================================*/	
+	Interface.Init = function(){
+		_ClientLiveCheck();
+		var ret = {};
+		if (typeof onInit === 'function') {ret = onInit();}
+		Server.onClientInit(ret,function(answ){
+			console.log('Удаленный вызов Серверной функции onClientInit: '+Interface.id+'- '+answ);
+		},function(answ){
+			console.error('Удаленный вызов Серверной функции onClientInit: '+Interface.id+'- '+answ);
+		});
+		_ServerLiveCheck();
+	}
+	
+	Interface.Destroy = function(){
+		if (typeof onDestroy === 'function') {onDestroy();};
+		
+		/* Destroy Timers */
+		for (var tm in Interface.Timers) {
+			if (typeof Interface.Timers[tm] !== 'undefined') {
+				clearTimeout(Interface.Timers[tm]);
+				delete(Interface.Timers[tm]);
+			}
+		}
+		Server.onClientDestroy('',function(answ){
+			delete(Direct.Forms[Interface.id]);
+			console.log('Удаленный вызов Серверной функции onClientDestroy: '+Interface.id+'- '+answ);
+		},function(answ){
+			delete(Direct.Forms[Interface.id]);
+			console.error('Удаленный вызов Серверной функции onClientDestroy: '+Interface.id+'- '+answ);
+		});
+	}
+	
+	/* Live Timer */
+	var _ClientLiveTimer;
+	function _ClientLiveCheck(){
+		if (typeof $('#Interface_'+Interface.id).data('code') !== 'undefined') {
+			_ClientLiveTimer = setTimeout(_ClientLiveCheck, 2000);
+		} else {
+			clearTimeout(_ClientLiveTimer);
+			if (typeof _ServerLiveTimer !== 'undefined') {clearTimeout(_ServerLiveTimer);}
+			Interface.Destroy();
+		}
+	};
+	
+	var _ServerLiveTimer;
+	function _ServerLiveCheck(){
+		if (typeof $('#Interface_'+Interface.id).data('code') !== 'undefined') {
+			_ServerLiveTimer = setTimeout(function(){
+				Server.onClientExist('',function(answ){
+					console.log('Удаленный вызов Серверной функции onClientExist: '+Interface.id+'- '+answ);
+				},function(answ){
+					delete(Direct.Forms[Interface.id]);
+					console.error('Удаленный вызов Серверной функции onClientExist: '+Interface.id+'- '+answ);
+				});
+				_ServerLiveCheck();
+			}, 30000);
+		} else {
+			clearTimeout(_ServerLiveTimer);
+		}
+	};
+	
+	return Interface;
+})());
+$('#Interface_{ID}').data('code').Init();
+</script>

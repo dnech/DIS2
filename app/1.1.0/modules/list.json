@@ -1,0 +1,18 @@
+{
+	"info": "Modules",
+	"list": [
+		"Logger",
+		"Sessions",
+		"Users",
+		"Acl",
+		"Gate",
+		"Direct",
+		"Libs",
+		"Files",
+		"Panels",
+		"Forms",
+		"WwwClient",
+		"WwwConfigurator",
+		"WwwLogin"
+	]
+}

@@ -1,0 +1,105 @@
+<style>
+{STYLE}
+</style>
+<div id="Panel{ID}" class="ThisPanel" style="height: 100%">
+{CONTENT}
+</div>
+<script>
+$('#Panel{ID}').data('code', (function(){
+
+	/* Default function */
+	var onInit, onDestroy;
+	
+	/* This Panel */
+	var ThisPanel = {};
+	var Elements = ThisPanel.Elements = {};
+	var Timers   = ThisPanel.Timers = {};
+
+	ThisPanel.id   = '{ID}';
+	ThisPanel.name = 'Panel{ID}';
+	ThisPanel.data = {DATA}
+	
+	/* Elements */
+	/* Блок генерируемый автоматически из списка элементов */
+	Elements['ThisPanel'] = $('#Panel{ID}');
+	$('#Panel{ID} [data-element]').each(function(i,elem) {
+		var Element = $(this).attr('data-element');
+		Elements[Element] = $(this);
+		if (typeof $(this).attr('id') === 'undefined'){$(this).attr('id', 'Panel{ID}_'+Element);}
+    });
+	//console.log('Элементы формы', Elements);
+
+	/* Server */
+	/* Блок генерируемый автоматически из списка экспортируемых сервером функций */
+	var Server = ThisPanel.Server = Direct.Panels[ThisPanel.id] = {DIRECT};
+
+/*=====================================================================================*/
+{CODE}
+/*=====================================================================================*/	
+	ThisPanel.Init = function(config){
+		_ClientLiveCheck();
+		var ret = {};
+		if (typeof onInit === 'function') {ret = onInit(config);}
+		Server.onClientInit(ret,function(answ){
+			//console.log('Удаленный вызов Серверной функции onClientInit: '+ThisPanel.id+'- '+answ);
+		},function(answ){
+			console.error('Удаленный вызов Серверной функции onClientInit: '+ThisPanel.id+'- '+answ);
+		});
+		_ServerLiveCheck();
+	}
+	
+	ThisPanel.Destroy = function(){
+		if (typeof onDestroy === 'function') {onDestroy();};
+		
+		/* Destroy Timers */
+		for (var tm in ThisPanel.Timers) {
+			if (typeof ThisPanel.Timers[tm] !== 'undefined') {
+				clearTimeout(ThisPanel.Timers[tm]);
+				delete(ThisPanel.Timers[tm]);
+			}
+		}
+		
+		clearTimeout(_ClientLiveTimer);
+		
+		Server.onClientDestroy('',function(answ){
+			//console.log('Удаленный вызов Серверной функции onClientDestroy: '+ThisPanel.id+'- '+answ);
+		},function(answ){
+			console.error('Удаленный вызов Серверной функции onClientDestroy: '+ThisPanel.id+'- '+answ);
+		});
+		delete(Direct.Panels[ThisPanel.id]);
+		console.log('ThisPanel.Destroy', $('#'+ThisPanel.name));
+		$('#'+ThisPanel.name).remove();
+	}
+	
+	/* Live Timer */
+	var _ClientLiveTimer;
+	function _ClientLiveCheck(){
+		if (typeof $('#Panel'+ThisPanel.id).data('code') !== 'undefined') {
+			_ClientLiveTimer = setTimeout(_ClientLiveCheck, 2000);
+		} else {
+			clearTimeout(_ClientLiveTimer);
+			if (typeof _ServerLiveTimer !== 'undefined') {clearTimeout(_ServerLiveTimer);}
+			ThisPanel.Destroy();
+		}
+	};
+	
+	var _ServerLiveTimer;
+	function _ServerLiveCheck(){
+		if (typeof $('#Panel'+ThisPanel.id).data('code') !== 'undefined') {
+			_ServerLiveTimer = setTimeout(function(){
+				Server.onClientExist('',function(answ){
+					//console.log('Удаленный вызов Серверной функции onClientExist: '+ThisPanel.id+'- '+answ);
+				},function(answ){
+					delete(Direct.Panels[ThisPanel.id]);
+					console.error('Удаленный вызов Серверной функции onClientExist: '+ThisPanel.id+'- '+answ);
+				});
+				_ServerLiveCheck();
+			}, 30000);
+		} else {
+			clearTimeout(_ServerLiveTimer);
+		}
+	};
+	
+	return ThisPanel;
+})());
+</script>
