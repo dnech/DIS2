@@ -1,0 +1,110 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+	<h1>Редактор панели</h1>
+</section>
+<!-- Main content -->
+<section class="content">
+	<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" onclick="Preview();">
+	  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+	</button>
+	<button type="button" class="btn btn-default" aria-label="Left Align">
+	  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+	</button>
+	
+	<!-- Custom Tabs -->
+	<div class="nav-tabs-custom">
+		<ul class="nav nav-tabs" id="t1">
+			<li class="active"><a href="#tab_1" data-toggle="tab">HTML</a></li>
+			<li><a href="#tab_2" data-toggle="tab">Код Клиента</a></li>
+			<li><a href="#tab_3" data-toggle="tab">Код Сервера</a></li>
+		</ul>
+		<div class="tab-content" style="height: 100%;">
+			<div class="tab-pane active" id="tab_1" style="height: 100%;">
+				<div class="row" style="height: 100%;">
+					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" style="height: 100%;"><div id="editor1" style="height: 100%;"></div></div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="height: 100%;"><div id="Test" style="height: 100%;">Preview</div></div>
+				</div>	
+			</div><!-- /.tab-pane -->
+			<div class="tab-pane" id="tab_2" style="height: 100%;">
+				<div id="editor2" style="min-height: 100%;">function foo(items) {
+					var x = "All this is syntax highlighted";
+					return x;
+				}</div>
+			</div><!-- /.tab-pane -->
+			<div class="tab-pane" id="tab_3" style="height: 100%;">
+                <div id="editor3" style="min-height: 100%;">function foo(items) {
+					var x = "All this is syntax highlighted";
+					return x;
+				}</div>
+			</div><!-- /.tab-pane -->
+		</div><!-- /.tab-content -->
+    </div><!-- nav-tabs-custom -->		
+</section><!-- /.content -->
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Пример</h4>
+      </div>
+      <div class="modal-body" id="Test1" style="width:200px;">dsfsdfsd
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+function Preview(){
+	var editor1 = ace.edit("editor1");
+	$("#Test").html(editor1.getValue());
+}
+
+$.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js',function(){
+  $.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-language_tools.js',function(){
+	
+	console.log('content_Content', $("#content_Content").height());
+	console.log('nav-tabs-custom', $(".nav-tabs-custom").height());
+	console.log('tab-content', $(".tab-content").height());
+	
+	$(".nav-tabs-custom").height($("#content_Content").height()-$(".main-header").height()-$("#t1").height());
+	
+	$("#content_Content").resize(function(){
+		$(".nav-tabs-custom").height($("#content_Content").height()-$(".main-header").height()-$("#t1").height());
+	});
+	
+	function prev(ed, tar){
+		$(tar).html('Preview...');
+		var annot = ed.getSession().getAnnotations();
+		for (var key in annot){
+			if (annot.hasOwnProperty(key) && annot[key].type !== 'info') {return}	
+		}
+		$(tar).html(ed.getValue());
+	}
+	
+	var editor1 = ace.edit("editor1");
+	//editor1.setTheme("ace/theme/monokai");
+	editor1.getSession().setMode("ace/mode/html");
+	editor1.on('input', function() {prev(editor1, "#Test");});
+	editor1.getSession().on('changeAnnotation', function() {prev(editor1, "#Test");});
+	
+
+	var editor2 = ace.edit("editor2");
+	//editor2.setTheme("ace/theme/monokai");
+	editor2.getSession().setMode("ace/mode/javascript");
+
+	var editor3 = ace.edit("editor3");
+	//editor3.setTheme("ace/theme/monokai");
+	editor3.getSession().setMode("ace/mode/javascript");
+	
+  });
+});
+</script>

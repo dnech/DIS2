@@ -1,0 +1,302 @@
+<style>
+.border {
+	border: 1px solid #C1C1C1;
+}
+
+.preview {
+	height: 100%; /* высота нашего блока */
+	width: 100%; /* ширина нашего блока */
+	background: #fff; /* цвет фона, белый */
+	overflow-x: scroll; /* прокрутка по горизонтали */
+	overflow-y: scroll; /* прокрутка по вертикали */
+}
+</style>
+
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+	<h1>Редактор панели</h1>
+</section>
+<!-- Main content -->
+<section class="content">
+	<div class="panel panel-default">
+		<div class="panel-body">
+		<input type="text" id="panel_name" value="test">
+		<div class="btn-group">
+			<button type="button" class="btn btn-info" onclick="ListPanel();">Открыть</button>
+			<button type="button" class="btn btn-warning" onclick="SavePanel();">Сохранить</button>
+			<button type="button" class="btn btn-success" onclick="RunPanel();">Запустить</button>
+			<button type="button" class="btn btn-success" id="download">Скачать панель</button>
+		</div>	
+		</div>
+	</div>
+	
+	<!-- Custom Tabs -->
+	<div class="nav-tabs-custom" id="t1">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#tab_pan1" data-toggle="tab">HTML</a></li>
+			<li><a href="#tab_pan2" data-toggle="tab">CSS</a></li>
+			<li><a href="#tab_pan3" data-toggle="tab">JS Клиента</a></li>
+			<li><a href="#tab_pan4" data-toggle="tab">JS Сервера</a></li>
+		</ul>
+		<div class="tab-content" style="height: 100%;">
+			<div class="tab-pane active" id="tab_pan1" style="height: 100%;">
+				<div class="row" style="height: 100%;">
+					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" style="height: 100%;"><div class="border" id="editor1" style="height: 100%;"></div></div>
+					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="height: 100%;"><div class="border preview1" id="Test" style="height: 100%;">Preview</div></div>
+				</div>	
+			</div><!-- /.tab-pane -->
+			<div class="tab-pane" id="tab_pan2" style="height: 100%;">
+				<div class="border" id="editor2" style="min-height: 100%;">function foo(items) {
+					var x = "All this is syntax highlighted";
+					return x;
+				}</div>
+			</div><!-- /.tab-pane -->
+			<div class="tab-pane" id="tab_pan3" style="height: 100%;">
+                <div class="border"  id="editor3" style="min-height: 100%;">function foo(items) {
+					var x = "All this is syntax highlighted";
+					return x;
+				}</div>
+			</div><!-- /.tab-pane -->
+			<div class="tab-pane" id="tab_pan4" style="height: 100%;">
+				<div class="border" id="editor4" style="min-height: 100%;">function foo(items) {
+					var x = "All this is syntax highlighted";
+					return x;
+				}</div>
+			</div>
+		</div><!-- /.tab-content -->
+    </div><!-- nav-tabs-custom -->		
+</section><!-- /.content -->
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" onclick="ClosePanel();">&times;</button>
+        <h4 class="modal-title" id="PreviewTitle">Тест панели</h4>
+      </div>
+      <div class="modal-body border preview1" id="ModalContent" style="height:500px"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="myModalPanelsList" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Список панелей</h4>
+      </div>
+      <div class="modal-body" id="ModalListContent"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+<script>
+var PreviewId = '';
+
+function ClosePanel() {
+	if (typeof $('#ModalContent .ThisPanel').data('code') !== 'undefined') {
+		$('#ModalContent .ThisPanel').data('code').Destroy();
+	}
+	$('#ModalContent').html('');
+	$('#myModal').off('shown.bs.modal');
+	PreviewId = '';
+}
+
+function DownloadPanel(name, data) {
+	if (typeof data === 'undefined') {
+		Direct.Panels.Get(
+			name,
+			function(ans){
+				var uriContent = "data:application/octet-stream," + encodeURIComponent(JSON.stringify(ans.data));
+				$('#download').attr("href", uriContent).attr("download", name + ".panel");
+			},
+			function(msg){
+				console.log('Error: ', msg);
+			}
+		);
+	} else {
+		var uriContent = "data:application/octet-stream," + encodeURIComponent(JSON.stringify(data));
+		$('#download').attr("href", uriContent).attr("download", name + ".panel");
+	}
+}
+
+function RunPanel() {
+	SavePanel(function(){
+		$('#ModalContent').html('<section class="content-header"><h1><center><div class="overlay"><i class="fa fa-refresh fa-spin"></i></div></center></h1></section>');
+		$('#myModal').modal('show');
+		
+		$('#myModal').on('shown.bs.modal', function() {
+			console.log('#myModal shown.bs.modal');
+			var name = $('#panel_name').val();
+			Direct.Panels.Content(
+				name,
+				function(msg){
+					PreviewId = msg.name;
+					$('#PreviewTitle').html('Тест панели "'+name+'" - "'+PreviewId+'"');
+					$('#ModalContent').html(msg.data);
+					$(msg.div).data('code').Init('Hello panel.');				
+				},
+				function(msg){
+					PreviewId = '';
+					$('#ModalContent').html('<section class="content"><div class="callout callout-danger"><h4>Ошибка загрузки</h4><p>Ошибка загрузки содержимого: '+msg.error.msg+'</p></div></section>');
+					$('#myModal').off('shown.bs.modal');
+				}
+			);
+		});
+	});
+}
+
+function ListPanel(){
+	Direct.Panels.List(
+		'',
+		function(ans){
+			var list = '';
+			for (key in ans.data) {
+				list += '<a href="#" onclick=\'LoadPanel("'+ans.data[key].name+'"); $("#myModalPanelsList").modal("hide");\'>'+ans.data[key].name+' ('+ans.data[key].type+')</a><br>';
+			}
+			$('#ModalListContent').html(list);
+			$('#myModalPanelsList').modal('show');
+		},
+		function(msg){
+			console.log('Error: ', msg);
+		}
+	);
+}
+
+function LoadPanel(name){
+	Direct.Panels.Get(
+		name,
+		function(ans){
+			//console.log('Load: ', ans.data);
+			$('#panel_name').val(name),
+			ace.edit("editor1").setValue(ans.data.panel, -1);
+			ace.edit("editor2").setValue(ans.data.style, -1);
+			ace.edit("editor3").setValue(ans.data.client, -1);
+			ace.edit("editor4").setValue(ans.data.server, -1);
+			ace.edit("editor1").resize();
+			ace.edit("editor2").resize();
+			ace.edit("editor3").resize();
+			ace.edit("editor4").resize();
+			DownloadPanel(name, ans.data);
+		},
+		function(msg){
+			console.log('Error: ', msg);
+		}
+	);
+}
+
+function SavePanel(ok, err){
+	Direct.Panels.Set(
+		{
+			name: $('#panel_name').val(),
+			data: {
+				panel:  ace.edit("editor1").getValue(),
+				style:  ace.edit("editor2").getValue(),
+				client: ace.edit("editor3").getValue(),
+				server: ace.edit("editor4").getValue()
+			}
+		},	
+		function(msg){
+			if (typeof ok === 'function') {ok();}
+			//console.log('Save: ', msg);
+			DownloadPanel($('#panel_name').val());
+		},
+		function(msg){
+			if (typeof err === 'function') {err();}
+			console.log('Error: ', msg);
+		}
+	);
+}
+
+$.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js',function(){
+  $.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-language_tools.js',function(){
+	
+	//console.log('content_Content', $("#content_Content").height());
+	//console.log('nav-tabs-custom', $(".nav-tabs-custom").height());
+
+	//console.log('t1 top', $("#t1").position().top);
+	//console.log('t1 height', $("#t1").height());
+
+	
+	$(".nav-tabs-custom").height($("#content_Content").height()-$("#t1").position().top);
+	
+	$("#content_Content").resize(function(){
+		$(".nav-tabs-custom").height($("#content_Content").height()-$("#t1").position().top);
+	});
+	
+	function prev(edHtml, edCss, tar){
+		$(tar).html('Preview...');
+		var annot = edHtml.getSession().getAnnotations();
+		for (var key in annot){
+			if (annot.hasOwnProperty(key) && annot[key].type !== 'info') {return}	
+		}
+		var Id = 'PREVIEW';
+		var prevdata  = '<style>'+edCss.getValue().replace(/#ThisPanel/g, '#PanelPreview')+'</style>';
+		    prevdata += '<div id="PanelPreview" style="height:100%;">'+edHtml.getValue().replace(/{ID}/g, 'Preview')+'</div>';
+		$(tar).html(prevdata);
+	}
+	
+	var editor1 = ace.edit("editor1");
+	//editor1.setTheme("ace/theme/monokai");
+	editor1.getSession().setMode("ace/mode/html");
+	editor1.on('input', function() {prev(editor1, editor2, "#Test");});
+	editor1.getSession().on('changeAnnotation', function() {prev(editor1, editor2, "#Test");});
+	editor1.setOptions({
+          fontFamily: "Courier New",
+          fontSize: "10pt"
+        });
+
+	var editor2 = ace.edit("editor2");
+	//editor2.setTheme("ace/theme/monokai");
+	editor2.getSession().setMode("ace/mode/css");
+	editor2.on('input', function() {prev(editor1, editor2, "#Test");});
+	editor2.getSession().on('changeAnnotation', function() {prev(editor1, editor2, "#Test");});
+	editor2.setOptions({
+          fontFamily: "Courier New",
+          fontSize: "10pt"
+        });
+	var editor3 = ace.edit("editor3");
+	//editor3.setTheme("ace/theme/monokai");
+	editor3.getSession().setMode("ace/mode/javascript");
+	editor3.setOptions({
+          fontFamily: "Courier New",
+          fontSize: "10pt"
+        });
+	var editor4 = ace.edit("editor4");
+	//editor3.setTheme("ace/theme/monokai");
+	editor4.getSession().setMode("ace/mode/javascript");
+	editor4.setOptions({
+          fontFamily: "Courier New",
+          fontSize: "10pt"
+        });
+  });
+});
+</script>

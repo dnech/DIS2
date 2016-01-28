@@ -1,0 +1,92 @@
+(function(){
+/*
+	Защита интерфейса
+	Если в течение 60 сек форма панель не активизируется, серверная часть будет зачищена
+*/
+var TimeOutPanel;
+function restartTimeOutPanel(){
+	if (typeof TimeOutPanel !== 'undefined') {clearTimeout(TimeOutPanel);}
+	TimeOutPanel = setTimeout(function(){
+		_onDestroy('server');
+	}, 60000);
+}
+restartTimeOutPanel();
+
+/* Default function */
+var onInit, onExist, onDestroy;
+	
+/* This Panels */
+var ThisPanel = {};
+var Export = ThisPanel.Export = {};
+var Timers = ThisPanel.Timers = {};
+
+ThisPanel.id   = '{ID}';
+ThisPanel.name = 'Panel'+ThisPanel.id;
+ThisPanel.file = App.Panels.List[ThisPanel.id].Name;
+ThisPanel.ssid = App.Panels.List[ThisPanel.id].Ssid;
+
+/* =============================== */
+{CODE}
+/* =============================== */
+
+/* Функция вызываемая клиентом при инициализации панели на клиенте */
+Export.onClientInit = function(ssid, param, ok, err){
+	if (typeof onInit === 'function') {onInit('client');}
+	ok('Панель '+ThisPanel.id+' создана на клиенте.');
+	//console.log('Интерфейс '+ThisPanel.id+' создан на клиенте.');
+}
+
+/* Функция вызываемая клиентом периодически сообщая, что панель на клиенте все еще активна */
+Export.onClientExist = function(ssid, param, ok, err){
+	if (typeof onExist === 'function') {onExist();}
+	ok('Панель '+ThisPanel.id+' существует на клиенте.');
+	//console.log('Интерфейс '+ThisPanel.id+' существует на клиенте.');
+	restartTimeOutPanel();
+}
+
+/* Функция вызываемая клиентом при уничтожении панели */
+Export.onClientDestroy = function(ssid, param, ok, err){
+	ok('Панель '+ThisPanel.id+' уничтожена на клиенте.');
+	//console.log('Интерфейс '+ThisPanel.id+' уничтожен на клиенте.');
+	_onDestroy('client');
+}
+
+/* Системная функция при уничтожении панели */
+function _onDestroy(info){
+	if (typeof onDestroy === 'function') {onDestroy(info);};
+	clearTimeout(TimeOutPanel);
+	/* Destroy Timers */
+	for (var name in ThisPanel.Timers) {
+		if (typeof ThisPanel.Timers[name] !== 'undefined') {
+			clearTimeout(ThisPanel.Timers[name]);
+			delete(ThisPanel.Timers[name]);
+		}
+	}
+	delete(ThisPanel.Timers);
+	delete(App.Panels.List[ThisPanel.id]);
+	App.Direct.Off('Panels.{ID}');
+	//console.log('Панель '+ThisPanel.id+' уничтожена на сервере. Инициатор: "'+info+'"');
+}
+
+
+	
+/* Формируем клиентский скрипт вызова серверных функции интерфейса */
+ThisPanel.exportDirect = '{';
+for (var name in Export) {
+	if (typeof Export[name] === 'function') {
+		ThisPanel.exportDirect += App.Direct.GetFunctionJs(undefined,'Panels.{ID}', name);
+	}
+}
+ThisPanel.exportDirect += '}';
+
+/* Объявляем в Direct серверные функции интерфейса */
+App.Direct.On({
+	Panels:{
+		{ID}:Export
+	}
+});
+
+if (typeof onInit === 'function') {onInit('server');}
+//console.log('Панель '+ThisPanel.id+' создана на сервере.', App.Panels.List[ThisPanel.id]);	
+return ThisPanel; 
+})();

@@ -1,0 +1,37 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+	<h1>Финансы</h1>
+</section>
+<!-- Main content -->
+<section class="content">
+	<div class="box box-default">
+		<div class="box-header with-border">
+			<i class="fa fa-bullhorn"></i>
+			<h3 class="box-title">Test Direct</h3>
+		</div><!-- /.box-header -->
+		<div class="box-body">
+			<a href="#" class="btn btn-block btn-primary btn-xs" onclick="uiTest(true);">Тест в консоли "Булево"</a></br>
+			<a href="#" class="btn btn-block btn-primary btn-xs" onclick="uiTest(123);">Тест в консоли "Число"</a></br>
+			<a href="#" class="btn btn-block btn-primary btn-xs" onclick="uiTest('Строка');">Тест в консоли "Строка"</a></br>
+			<a href="#" class="btn btn-block btn-primary btn-xs" onclick="uiTest({});">Тест в консоли "Объект"</a></br>	
+			<div id="answer" class="callout callout-success"><p>ОК!</p></div></br>
+			<div id="error" class="callout callout-danger"><p>ERROR!</p></div>
+		</div>
+	</div>
+	</br>
+</section><!-- /.content -->
+<script>
+function ok(msg){
+	$('#answer').html('<p>ОК!</p>'+msg);
+	console.log(msg);
+}
+
+function err(msg){
+	$('#answer').html('<p>ERROR!</p>'+msg);
+	console.error(msg);
+}
+
+function uiTest(data){
+	Direct.Ping(data, ok, err);
+}
+</script>

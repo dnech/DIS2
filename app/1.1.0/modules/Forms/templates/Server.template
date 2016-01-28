@@ -1,0 +1,92 @@
+(function(){
+/*
+	Защита интерфейса
+	Если в течение 60 сек форма панель не активизируется, серверная часть будет зачищена
+*/
+var TimeOutInterface;
+function restartTimeOutInterface(){
+	if (typeof TimeOutInterface !== 'undefined') {clearTimeout(TimeOutInterface);}
+	TimeOutInterface = setTimeout(function(){
+		_onDestroy('server');
+	}, 60000);
+}
+restartTimeOutInterface();
+
+/* Default function */
+var onInit, onExist, onDestroy;
+	
+/* This Interface */
+var Interface = {};
+var Export = Interface.Export = {};
+var Timers = Interface.Timers = {};
+
+Interface.id   = '{ID}';
+Interface.name = 'Interface_{ID}';
+Interface.file = App.Forms.List[Interface.id].Name;
+Interface.ssid = App.Forms.List[Interface.id].Ssid;
+
+/* =============================== */
+{CODE}
+/* =============================== */
+
+/* Функция вызываемая клиентом при инициализации панели на клиенте */
+Export.onClientInit = function(ssid, param, ok, err){
+	if (typeof onInit === 'function') {onInit('client');}
+	ok('Интерфейс '+Interface.id+' создан на клиенте.');
+	//console.log('Интерфейс '+Interface.id+' создан на клиенте.');
+}
+
+/* Функция вызываемая клиентом периодически сообщая, что панель на клиенте все еще активна */
+Export.onClientExist = function(ssid, param, ok, err){
+	if (typeof onExist === 'function') {onExist();}
+	ok('Интерфейс '+Interface.id+' существует на клиенте.');
+	//console.log('Интерфейс '+Interface.id+' существует на клиенте.');
+	restartTimeOutInterface();
+}
+
+/* Функция вызываемая клиентом при уничтожении панели */
+Export.onClientDestroy = function(ssid, param, ok, err){
+	ok('Интерфейс '+Interface.id+' уничтожен на клиенте.');
+	//console.log('Интерфейс '+Interface.id+' уничтожен на клиенте.');
+	_onDestroy('client');
+}
+
+/* Системная функция при уничтожении панели */
+function _onDestroy(info){
+	if (typeof onDestroy === 'function') {onDestroy(info);};
+	clearTimeout(TimeOutInterface);
+	/* Destroy Timers */
+	for (var name in Interface.Timers) {
+		if (typeof Interface.Timers[name] !== 'undefined') {
+			clearTimeout(Interface.Timers[name]);
+			delete(Interface.Timers[name]);
+		}
+	}
+	delete(Interface.Timers);
+	delete(App.Forms.List[Interface.id]);
+	App.Direct.Off('Forms.{ID}');
+	//console.log('Интерфейс '+Interface.id+' уничтожен на сервере. Инициатор: "'+info+'"');
+}
+
+
+	
+/* Формируем клиентский скрипт вызова серверных функции интерфейса */
+Interface.exportDirect = '{';
+for (var name in Export) {
+	if (typeof Export[name] === 'function') {
+		Interface.exportDirect += App.Direct.GetFunctionJs(undefined,'Forms.{ID}', name);
+	}
+}
+Interface.exportDirect += '}';
+
+/* Объявляем в Direct серверные функции интерфейса */
+App.Direct.On({
+	Forms:{
+		{ID}:Export
+	}
+});
+
+if (typeof onInit === 'function') {onInit('server');}
+//console.log('Интерфейс '+Interface.id+' создан на сервере.', App.Forms.List[Interface.id]);	
+return Interface; 
+})();

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CONFIG</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.4 -->
+    <link rel="stylesheet" href="vendor/bootstrap-3.3.4/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="vendor/font-awesome-4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="vendor/ionicons-2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="vendor/adminlte-2.3.0/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+          page. However, you can choose any other skin. Make sure you
+          apply the skin class to the body tag so the changes take effect.
+    -->
+    <link rel="stylesheet" href="vendor/adminlte-2.3.0/css/skins/skin-green.min.css">
+
+	
+	<!-- iCheck -->
+    <link rel="stylesheet" href="vendor/iCheck/flat/blue.css">
+    <!-- Morris chart -->
+    <link rel="stylesheet" href="vendor/morris/morris.css">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="vendor/jvectormap/jquery-jvectormap-1.2.2.css">
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="vendor/datepicker/datepicker3.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="vendor/daterangepicker/daterangepicker-bs3.css">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="vendor/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+	
+	<link rel="stylesheet" href="vendor/w2ui/w2ui-1.4.2.min.css">
+	
+	<!-- xElement Style -->
+	<link rel="stylesheet" href="vendor/xelement/xtab.css">
+	<link rel="stylesheet" href="vendor/jQueryFileUpload/css/jquery.fileupload.css">
+	
+	<script type="text/javascript" src="../direct/api"></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <!--
+  BODY TAG OPTIONS:
+  =================
+  Apply one or more of the following classes to get the
+  desired effect
+  |---------------------------------------------------------|
+  | SKINS         | skin-blue                               |
+  |               | skin-black                              |
+  |               | skin-purple                             |
+  |               | skin-yellow                             |
+  |               | skin-red                                |
+  |               | skin-green                              |
+  |---------------------------------------------------------|
+  |LAYOUT OPTIONS | fixed                                   |
+  |               | layout-boxed                            |
+  |               | layout-top-nav                          |
+  |               | sidebar-collapse                        |
+  |               | sidebar-mini                            |
+  |---------------------------------------------------------|
+  -->
+  <body class="hold-transition skin-green sidebar-mini sidebar-collapse">
+    <div class="wrapper" style="height: 100%;">
+
+      <!-- Main Header -->
+      <header class="main-header" id="MainHeader">
+
+        <!-- Logo -->
+        <a href="index.html" class="logo">
+          <!-- mini logo for sidebar mini 50x50 pixels -->
+          <span class="logo-mini"><b>CFG</b></span>
+          <!-- logo for regular state and mobile devices -->
+          <span class="logo-lg"><b>CONFIG</b></span>
+        </a>
+
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+          <!-- Navbar Right Menu -->
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <!-- User Account Menu -->
+              <li class="dropdown user user-menu">
+                <!-- Menu Toggle Button -->
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <!-- The user image in the navbar-->
+                  <img src="images/profiles/user2.jpg" class="user-image" alt="User Image">
+                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                  <span class="hidden-xs">Алиса Дисс</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <!-- The user image in the menu -->
+                  <li class="user-header">
+                    <img src="images/profiles/user2.jpg" class="img-circle" alt="User Image">
+                    <p>
+                      Алиса Дисс
+                    </p>
+					<p class="text-muted text-center"><small>Менеджер</small></p>
+                  </li>
+
+                  <!-- Menu Footer-->
+                  <li class="user-footer">
+                    <div class="pull-left">
+                      <a href="#" onclick="uiViewContent('profile');" class="btn btn-default btn-flat">Профиль</a>
+                    </div>
+                    <div class="pull-right">
+                      <a href="#" onclick="uiLogOut();" class="btn btn-default btn-flat">Выход</a>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!-- Left side column. contains the logo and sidebar -->
+      <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+
+          <!-- Sidebar user panel (optional) -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="images/profiles/user2.jpg" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+              <p>Алиса Дисс</p>
+              <!-- Status -->
+              <a href="#"><i class="fa fa-circle text-success"></i> Онлайн</a>
+            </div>
+          </div>
+
+          <!-- search form (Optional) -->
+          <!--form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Поиск...">
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form>
+          <!-- /.search form -->
+
+          <!-- Sidebar Menu -->
+          <ul class="sidebar-menu">
+            <!--li class="header">HEADER</li-->
+            <!-- Optionally, you can add icons to the links -->
+			<li class="menu_item" id="menu_dashboard">
+              <a href="#" onclick="uiViewContent('dashboard');">
+                <i class="fa fa-file-code-o"></i> <span>Модули</span>
+              </a>
+            </li>
+			<li class="menu_item" id="menu_panels">
+              <a href="#" onclick="uiViewContent('panels');">
+                <i class="fa fa-newspaper-o"></i> <span>Панели</span>
+              </a>
+            </li>
+			<li class="menu_item" id="menu_zakaz">
+              <a href="#" onclick="getPanel('Cfg.Panels', '#content_Content', {test:'param1'});">
+                <i class="fa fa-bus"></i> <span>Cfg.Panels</span>
+              </a>
+            </li>
+			<li class="menu_item" id="menu_otchet">
+              <a href="#" onclick="uiViewContent('otchet');">
+                <i class="fa fa-pie-chart"></i> <span>Отчеты</span>
+              </a>
+            </li>
+			<li class="menu_item" id="menu_test">
+              <a href="#" onclick="uiViewContent('test');">
+                <i class="fa fa-pie-chart"></i> <span>Тест</span>
+              </a>
+            </li>
+			<li class="menu_item treeview" id="menu_system">
+              <a href="#" onclick="uiViewContent('news');">
+                <i class="fa fa-cubes"></i> <span>Система</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+			  <ul class="menu_item treeview-menu" id="menu_system_list">
+                <li class="menu_item" id="menu_news"><a href="#" onclick="uiViewContent('news');"><i class="fa fa-rss"></i> Новости</a></li>
+                <li class="menu_item" id="menu_messages"><a href="#" onclick="uiViewContent('messages');"><i class="fa fa-comments-o"></i> Сообщения</a></li>
+                <li class="menu_item" id="menu_profile"><a href="#" onclick="uiViewContent('profile');"><i class="fa fa-user"></i> Профиль</a></li>
+				<li class="menu_item" id="menu_about"><a href="#" onclick="uiViewContent('about');"><i class="fa fa-question"></i> О системе</a></li>
+              </ul>
+            </li>
+          </ul><!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+	  
+<style>
+#content_Content {
+	/* height: 100%; /* высота нашего блока */
+	/* width: 100%; /* ширина нашего блока */
+	/* background: #fff; /* цвет фона, белый */
+	overflow-x: auto; /* прокрутка по горизонтали */
+	overflow-y: auto; /* прокрутка по вертикали */
+}
+</style>
+
+<!--  ************************** Контент НАЧАЛО **************************** -->
+      <div class="content-wrapper">
+       <div id="content_Content"></div> 
+      </div>
+<!--  **************************  Контент КОНЕЦ **************************** -->
+    </div><!-- ./wrapper -->
+
+    <!-- REQUIRED JS SCRIPTS -->
+
+    <!-- jQuery 2.1.4 -->
+    <script src="vendor/jQuery/jQuery-2.1.4.min.js"></script>
+	<!-- jQuery UI 1.11.4 -->
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+      $.widget.bridge('uibutton', $.ui.button);
+    </script>
+	<!-- Bootstrap 3.3.5 -->
+    <script src="vendor/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+	
+	
+	
+	
+	<script src="vendor/jQueryFileUpload/js/jquery.fileupload.js"></script>
+	<script src="vendor/jQueryFileUpload/js/jquery.fileupload-video.js"></script>
+	<script src="vendor/jQueryFileUpload/js/jquery.fileupload-process.js"></script>
+	<script src="vendor/jQueryFileUpload/js/jquery.iframe-transport.js"></script>
+	
+	
+	
+	<!-- Morris.js charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="vendor/morris/morris.min.js"></script>
+    <!-- Sparkline -->
+    <script src="vendor/sparkline/jquery.sparkline.min.js"></script>
+    <!-- jvectormap -->
+    <script src="vendor/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="vendor/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="vendor/knob/jquery.knob.js"></script>
+    <!-- daterangepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="vendor/daterangepicker/daterangepicker.js"></script>
+    <!-- datepicker -->
+    <script src="vendor/datepicker/bootstrap-datepicker.js"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="vendor/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <!-- Slimscroll -->
+    <script src="vendor/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="vendor/fastclick/fastclick.min.js"></script>
+	
+	<script src="vendor/w2ui/w2ui-1.4.2.min.js"></script>
+    
+	<script src="vendor/xelement/xtab.js"></script>
+	
+	<!-- AdminLTE App -->
+    <script src="view/ui.js"></script>
+	
+		  <script>
+	  
+	  
+	  
+	  
+	(function ($) {
+		'use strict';
+		function _resz(){
+			var height = $(window).height()-$('#MainHeader').height();
+			$("#content_Content").css('height', height);
+			$("#content_Content").css('min-height', height);
+		};
+		$(window).resize(function () {
+			_resz();
+		});
+		_resz();
+	})(jQuery);
+	  
+	  </script>
+	  
+    <!-- Optionally, you can add Slimscroll and FastClick plugins.
+         Both of these plugins are recommended to enhance the
+         user experience. Slimscroll is required when using the
+         fixed layout. -->
+  </body>
+</html>

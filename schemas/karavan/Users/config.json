@@ -1,0 +1,13 @@
+{
+	"info":"Config module Users",
+	"users": {
+		"admin": {
+			"pass": "123",
+			"acl": {
+				"DirectTest": {
+					"Test1": true
+				}
+			}
+		}
+	}
+}

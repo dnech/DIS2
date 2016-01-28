@@ -1,0 +1,5 @@
+{
+	"info": "Config module Libs",
+	"url":  "/libs/:type",
+	"ssid": "DIS_SSID"
+}
