@@ -7,9 +7,8 @@ module.exports = (function(){
 	return {
 		Required: ['Logger','Acl','Direct'],	
 		Module: function(conf){
-			var console = App.Logger.set(conf.name);
-			//console.enable();
-			console.log('Модуль либ1', 123, {hello:123});
+			var console = App.Logger.console(conf.name, {prefix:'    '});
+			console.log('Тестовое сообщение модуля', conf);
 			
 			var me = App.namespace(conf.name, conf);
 			var vm = require('vm');
