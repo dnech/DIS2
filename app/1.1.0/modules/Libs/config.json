@@ -1,5 +1,13 @@
 {
 	"info": "Config module Libs",
 	"url":  "/libs/:type",
-	"ssid": "DIS_SSID"
+	"ssid": "DIS_SSID",
+	"logger":{
+		"enable":true,
+		"data":false,
+		"time":false,
+		"milliseconds":false,
+		"level":0,
+		"prefix":"        "
+	}
 }

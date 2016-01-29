@@ -28,6 +28,8 @@
 	46 цвет морской волны фона
 	47 серый цвет фона
 */
+
+var util = require('util');
 	
 /*  MODULE LOGGER */	
 module.exports = (function(){
@@ -44,7 +46,7 @@ module.exports = (function(){
 		}
 		
 		// TimeStamp
-		function timestamp() {
+		function timestamp(date, time, milliseconds) {
 			var ts_ = new Date(),
 				dy = ('0'+ts_.getDate()).substr(-2),			//	Set the day as a number (1-31)
 				yy = ts_.getFullYear(),							//	Set the year (optionally month and day)
@@ -53,16 +55,22 @@ module.exports = (function(){
 				mi = ('0'+ts_.getMinutes()).substr(-2),			//	Set the minutes (0-59)
 				mo = ('0'+(ts_.getMonth()+1)).substr(-2),		//	Set the month (0-11)
 				sc = ('0'+ts_.getSeconds()).substr(-2),			//	Set the seconds (0-59)
-				tm = ts_.getTime();								//	Set the time (milliseconds since January 1, 1970)	
-			return '['+yy+'.'+mo+'.'+dy+' '+hr+':'+mi+':'+sc+'.'+ms+']';
+				tm = ts_.getTime();								//	Set the time (milliseconds since January 1, 1970)
+				
+			var _dt = '', _tm = '', _ms = '';	
+			if (date) {_dt = yy+'.'+mo+'.'+dy;}
+			if (time) {_tm = hr+':'+mi+':'+sc;}
+			if (milliseconds) {_ms = '.'+ms;}
+			
+			return '['+_dt+((date && time)?' ':'')+_tm+_ms+']';
 		}
 		
 		// Logger
-		function logger(type, module, arg){
+		function logger(module, type, arg){
 			var config = ModuleList[module];
 			if (config && config.enable){
 				var param = config.type[type] || config.type['trace'],
-					ts = (config.timestamp) ?  color('33', timestamp(), !config.color)+' ' : '',
+					ts = (config.date || config.time || config.milliseconds) ?  color('33', timestamp(config.date, config.time, config.milliseconds), !config.color)+' ' : '',
 					md = (config.modulename) ?  ' '+color('2;32', module+':', !config.color) : '';
 				
 				if ( param.level >= config.level ) {
@@ -84,53 +92,39 @@ module.exports = (function(){
 					if (begin) {console.time(title);} else {console.timeEnd(title);}
 				}
 			}
-		}
+		};
 		
+		function config(module, cfg){
+			ModuleList[module] = App.utils.extend(true, ModuleList[module], cfg);
+		};
+		
+		function getTypeFunction(module, key){
+			return function(){logger(module, key, arguments);}
+		}; 
+
+		// MAIN OBJECT
 		me.console = function(module, cfg){
-			ModuleList[module] = {
-				enable:     true,
-				timestamp:  true,
-				modulename: true,
-				prefix:     '',
-				color:		true,
-				level:      0,
-				type: {
-					'trace':   {level: 0, color:'1',  name: '[trace]'}, 
-					'debug':   {level: 1, color:'1;36',  name: '[debug]'}, 
-					'info':    {level: 2, color:'1;32',  name: '[info]'}, 
-					'warning': {level: 3, color:'1;33',  name: '[warning]'},
-					'error':   {level: 4, color:'1;31',  name: '[error]'},
-					'fatal':   {level: 5, color:'1;31;41', name: '[fatal]'}
-				}
-			};
-			
-			function config(cfg){
-				ModuleList[module] = App.utils.extend(true, {}, ModuleList[module], cfg);
-			};
-			
-			if (typeof cfg == 'object') {config(cfg);}
-			
-			return {
-				config:  config,
+			ModuleList[module] = me.config.default;
+			if (typeof cfg == 'object') {config(module, cfg);}
+			var obj = {
+				config:  function(cfg){config(module, cfg);},
 				color:	 color,
-				logger:	 logger,
-				log:	 function(){ logger('info',		module, arguments); },
-				trace:	 function(){ logger('trace',	module, arguments); },
-				debug:	 function(){ logger('debug',	module, arguments); },
-				info:	 function(){ logger('info',		module, arguments); },
-				warning: function(){ logger('warning',	module, arguments); },
-				error:	 function(){ logger('error',	module, arguments); },
-				fatal:	 function(){ logger('fatal',	module, arguments); },  
+				logger:	 function(type, arg){logger(module, type, arg);},
 				time:	 function(name){time(module, name, true)},
 				timeEnd: function(name){time(module, name, false)},
+				param:   function(name, value){logger(module, ModuleList[module].deftype, [color('1;33', name+' ('+(typeof value)+')'), color('1;32', util.inspect(value))]);}
+			};
+			for (var key in ModuleList[module].type) {
+				obj[key] = getTypeFunction(module, key);
 			}
+			return obj;
 		};
 	
 		
 		/* Init module */
 		me.init = function(){
 			//test
-			var test = me.console('Logger', {timestamp:true, prefix:'     '});
+			var test = me.console('Logger', {date: false, time:false, prefix:'     '});
 			test.config({modulename:true, level: 0});
 			
 			test.time('Time');
@@ -140,6 +134,7 @@ module.exports = (function(){
 			test.warning('Test warning message.');
 			test.error('Test error message.');
 			test.fatal('Test fatal message.');
+			test.param('Name', [123, {test:123}]);
 			test.timeEnd('Time');
 
 		};

@@ -1,3 +1,23 @@
 {
-	"info":"Config module Logger"
+	"info":"Config module Logger",
+	"default":{
+		"enable":true,
+		"data":true,
+		"time":true,
+		"milliseconds":true,
+		"modulename":true,
+		"prefix":"",
+		"color":true,
+		"level":0,
+		"deftype":"trace",
+		"type": {
+			"trace":   {"level": 0, "color":"1",       "name": "[trace]"}, 
+			"debug":   {"level": 1, "color":"1;36",    "name": "[debug]"}, 
+			"info":    {"level": 2, "color":"1;32",    "name": "[info]"}, 
+			"warning": {"level": 3, "color":"1;33",    "name": "[warning]"},
+			"error":   {"level": 4, "color":"1;31",    "name": "[error]"},
+			"fatal":   {"level": 5, "color":"1;31;41", "name": "[fatal]"},
+			"log":     {"level": 2, "color":"1",       "name": ""}
+		}
+	}
 }

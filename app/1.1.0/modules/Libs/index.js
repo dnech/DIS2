@@ -3,25 +3,23 @@ var path = require('path');
 var fs   = require('fs');
 
 module.exports = (function(){
-
 	return {
-		Required: ['Logger','Acl','Direct'],	
+		Required: ['Logger', 'Configs', 'Acl', 'Direct'],	
 		Module: function(conf){
-			var console = App.Logger.console(conf.name, {prefix:'    '});
-			console.log('Тестовое сообщение модуля', conf);
-			
 			var me = App.namespace(conf.name, conf);
-			var vm = require('vm');
+			var console = App.Logger.console(conf.name, me.config.logger);
+			console.info('Load');
+			
 			
 			me.List = {};
 			
-			log.param('    Module "'+conf.name+'" conf: ', conf);
+			console.param('conf', conf);
 			
 			var DataPathModule = path.resolve(conf.path, './data');
 			var DataPathScheme = path.resolve(App.path.schema, './'+conf.name+'/data');
 			
-			log.param('    DataPathModule ', DataPathModule);
-			log.param('    DataPathScheme ', DataPathScheme);
+			console.param('DataPathModule', DataPathModule);
+			console.param('DataPathScheme', DataPathScheme);
 			
 			
 			/* Список */
@@ -293,7 +291,12 @@ module.exports = (function(){
 			});
 			
 			me.init = function(){
-				log.param('    Module "'+conf.name+'" INIT: ', conf);
+				console.info('Init');
+				var lib = App.Configs.filebox(conf.name, './data', '.lib');
+				console.param('lib', lib);
+				lib.set('temp1', {name:'temp'});
+				lib.set('temp2', {name:'temp'});
+				lib.delete('temp2');
 			};
 			
 			return me;

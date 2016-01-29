@@ -6,7 +6,7 @@ function exists(file){
 }
 
 // Modules load
-function modulesLoad(mods, folder, required) {
+function modulesLoad(type, mods, folder, required) {
 	try {
 		var Modules = App.namespace('modules'); 
 		for (var idx in mods) {
@@ -23,8 +23,9 @@ function modulesLoad(mods, folder, required) {
 				App.utils.extend(true, config, config_schema);
 				
 				Modules[module] = require(mod_folder);
-				modulesLoad(Modules[module].Required, folder, true);
-				Modules[module].Compile = Modules[module].Module({name: module, path: mod_folder, config: config});
+				modulesLoad(type, Modules[module].Required, folder, true);
+				Modules[module].Config  = {name: module, path: mod_folder, type: type, config: config};
+				Modules[module].Compile = Modules[module].Module(Modules[module].Config);
 			} else {
 				if (!required){log.title('  Load "'+module+'", already loaded.');} else {log.title('    Load required "'+module+'", already loaded.');}
 			}
@@ -69,7 +70,7 @@ module.exports = function(){
 		log.info(log.color('1;35', 'Load modules...'));
 		var list = require(path.resolve(App.path.modules, './list.json')).list;
 		log.param('list', list);
-		modulesLoad(list, App.path.modules);
+		modulesLoad('module', list, App.path.modules);
 	} catch(err) {
 		log.error('Core init module', err);
 		return;
@@ -78,8 +79,7 @@ module.exports = function(){
 		log.info(log.color('1;35', 'Load plugins...'));
 		var list = modulesFind(App.path.plugins); //require(path.resolve(App.path.plugins, './list.json')).list;
 		log.param('list', list);
-		modulesLoad(list, App.path.plugins);
-		//modulesInit();
+		modulesLoad('plugin', list, App.path.plugins);
 	} catch(err) {
 		log.error('Core init plugin', err);
 		return;

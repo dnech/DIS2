@@ -1,221 +1,131 @@
-/*  MODULE FILES */
-var url = require('url'),
-    fs = require('fs');
-	
+/*  MODULE CONFIGS */	
 module.exports = (function(){
-	/* Массив регистрируемых gпутей */
-	var Directories = {
-	
-	};
-	
+	var Required = ['Logger'];
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
+		//-- BEGIN --
 		
-		function download(category, name, req, res){
-			var path = App.path.schema + '/'+conf.name+'/data/' + name;
-			res.download(path, function(err) {
-				console.log('download', req.cookies);
-				if (err) {
-					res.writeHead(400, {'Content-type':'text/html'})
-					console.log(err);
-					res.end("No such file");    
-				}
-			}, function(err) {
-				if (err) {
-					res.writeHead(400, {'Content-type':'text/html'})
-					console.log(err);
-					res.end("Connect error");    
-				}
-			});
+		var path = require('path');
+		var fs   = require('fs');
+		
+		// Logger.console
+		var console = App.Logger.console(conf.name, me.config.logger);
+		console.info('Load');
+		
+		function exist(p){
+			try {
+				fs.accessSync(p, fs.F_OK);
+				return true;
+			} catch (e) {
+				return false;
+			}
 		};
 		
-		function upload(req, res, server, express){
-			var multiparty = require('multiparty');
-			// создаем форму
-			var form = new multiparty.Form();
-			//здесь будет храниться путь с загружаемому файлу, его тип и размер
-			var uploadFile = {uploadPath: '', type: '', size: 0};
-			//максимальный размер файла
-			var maxSize = 2 * 1024 * 1024; //2MB
-			//поддерживаемые типы(в данном случае это картинки формата jpeg,jpg и png)
-			var supportMimeTypes = ['image/jpg', 'image/jpeg', 'image/png'];
-			//массив с ошибками произошедшими в ходе загрузки файла
-			var errors = [];
-
-			 //если произошла ошибка
-			form.on('error', function(err){
-				if(fs.existsSync(uploadFile.path)) {
-					//если загружаемый файл существует удаляем его
-					fs.unlinkSync(uploadFile.path);
-					console.log('error');
+		function List(p){
+			var list = [];	
+			
+			function scan(dir, type){
+				if (exist(dir)) {
+					fs.readdirSync(dir).forEach(function(item, i, arr) {
+						if (item.substring(item.length - p.ext.length) === p.ext) {
+							var stats = fs.statSync(path.resolve(dir, item));
+							list.push({name:item.substring(0, item.length - p.ext.length), type: type, stats:stats});
+						}
+					});
 				}
-			});
-
-			form.on('close', function() {
-				//если нет ошибок и все хорошо
-				if(errors.length == 0) {
-					//сообщаем что все хорошо
-					res.send({status: 'ok', text: 'Success'});
-				}
-				else {
-					if(fs.existsSync(uploadFile.path)) {
-						//если загружаемый файл существует удаляем его
-						fs.unlinkSync(uploadFile.path);
-					}
-					//сообщаем что все плохо и какие произошли ошибки
-					res.send({status: 'bad', errors: errors});
-				}
-			});
-
-			// при поступление файла
-			form.on('part', function(part) {
-				//читаем его размер в байтах
-				uploadFile.size = part.byteCount;
-				//читаем его тип
-				uploadFile.type = part.headers['content-type'];
-				//путь для сохранения файла
-				uploadFile.path = './files/' + part.filename;
-
-				//проверяем размер файла, он не должен быть больше максимального размера
-				if(uploadFile.size > maxSize) {
-					errors.push('File size is ' + uploadFile.size + '. Limit is' + (maxSize / 1024 / 1024) + 'MB.');
-				}
-
-				//проверяем является ли тип поддерживаемым
-				if(supportMimeTypes.indexOf(uploadFile.type) == -1) {
-					errors.push('Unsupported mimetype ' + uploadFile.type);
-				}
-
-				//если нет ошибок то создаем поток для записи файла
-				if(errors.length == 0) {
-					var out = fs.createWriteStream(uploadFile.path);
-					part.pipe(out);
-				}
-				else {
-					//пропускаем
-					//вообще здесь нужно как-то остановить загрузку и перейти к onclose
-					part.resume();
-				}
-			});
-
-			// парсим форму
-			form.parse(req);
+			};
 			
+			if (p.admin) {
+				scan(p.module, 'system');
+				scan(p.schema, 'scheme');
+			} else {
+				scan(p.schema, 'scheme');
+				scan(p.module, 'system');
+			}
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			//var path   = App.path.schema + '/'+conf.name+'/data/';
-			
-			/*
-			var upload = require('jquery-file-upload-middleware')				
-				
-				upload.configure({
-					uploadDir: path,
-					uploadUrl: me.config.upload
-				});
-			
-				upload.fileHandler({
-					uploadDir: function () {
-						return __dirname + '/public/uploads/'
-					},
-					uploadUrl: function () {
-						return '/uploads'
-					}
-				})(req, res);
-			*/
-			/*
-			res.download(path, function(err) {
-				console.log('download', req.cookies);
-				if (err) {
-					res.writeHead(400, {'Content-type':'text/html'})
-					console.log(err);
-					res.end("No such file");    
-				}
-			}, function(err) {
-				if (err) {
-					res.writeHead(400, {'Content-type':'text/html'})
-					console.log(err);
-					res.end("Connect error");    
-				}
-			});
-			*/
+			list.sort();
+			return list;
 		};
 		
-		
-		function addDir(name, dir, filter, list, download, upload, acl) {
-	
-		};
-	
-		me.List = function(param){
-			return require('util').inspect(Directories, param);
-		};
-		
-		me.On = function(){
-			return false;
-		};
-		
-		me.Off = function(path) {
-			return false; 
-		};
-		
-		/* test object */
-		me.On('Ping',
-			function(auth, param, ok, err) {
-				ok('Pong "'+param+'" ('+(typeof param)+'): '+me.List());	
-			},
-		'*');
-		
-		
-		//Registre route
-		/* api */
-		App.Gate.regRoute('Files, download: "'+me.config.download+'"', function(server){
-			server.get(me.config.download, function(req, res) {
-				var query = url.parse(req.url, true).query;
-				if (typeof req.params.file !== 'undefined') {
-					download(req.params.category, req.params.file, req, res);
+		/* Установить */
+		function Set(p, file, data){
+			try {
+				if (p.admin) {
+					if (!exist(p.module)){fs.mkdirSync(p.module);}
+					
+					var file = path.resolve(p.module, './'+file+p.ext);
+					var data = JSON.stringify(data);
+					fs.writeFileSync(file, data, 'utf8');
+					return {success: true};
 				} else {
-					res.writeHead(404, {'Content-type':'text/html'})
-					res.end("Bad file request, use '/files/:category/:file'"); 
+					if (!exist(p.schemapath)){fs.mkdirSync(p.schemapath);}
+					if (!exist(p.schema)){fs.mkdirSync(p.schema);}
+					
+					var file = path.resolve(p.schema, './'+file+p.ext);
+					var data = JSON.stringify(data);
+					fs.writeFileSync(file, data, 'utf8');
+					return {success: true};
 				}
-			});
-		});
-		
-		/* UPLOAD */
-		App.Gate.regRoute('Files, upload: "'+me.config.upload+'"', function(server, express){
-			server.get(me.config.upload, function( req, res ){
-				res.redirect('/');
-			});
-			server.put(me.config.upload, function( req, res ){
-				res.redirect('/');
-			});
-			server.delete(me.config.upload, function( req, res ){
-				res.redirect('/');
-			});
-			server.use(me.config.upload, function(req, res){
-				upload(req, res, server, express);
-			});
-		});
-		
-		
-		/* Init module */
-		me.init = function(){
-			log.param('    Directories:', Directories);
-			console.log(me.List({ colors: true, showHidden: false, depth: null }));
+			} catch(error) {
+				return {success: false, msg: error};
+			}
+		};
+			
+		/* Получить */
+		function Get(p, file){
+			var json_data = '';
+			
+			try { path.resolve(dir, item)
+				json_data = fs.readFileSync(path.resolve(p.module, './'+file+p.ext), "utf8").toString('utf8');
+			} catch(error) {
+				try {
+					json_data = fs.readFileSync(path.resolve(p.schema, './'+file+p.ext), "utf8").toString('utf8');
+				} catch(error) {
+					return {success: false, msg: error};
+				}
+			}
+			
+			try {
+				var data = JSON.parse(json_data);
+				return {success: true, data: data};
+			} catch(error) {
+				return {success: false, msg: error};
+			}
+		};
+			
+		/* Удалить */
+		function Delete(p, file){
+			if (p.admin) {
+				fs.unlinkSync(path.resolve(p.module, './'+file+p.ext));
+			}
+			fs.unlinkSync(path.resolve(p.schema, './'+file+p.ext));
+		};
+			
+		me.filebox = function(module, addpath, ext, admin){
+			var cfg = App.modules[module].Config;
+			addpath = addpath || '';
+			ext = ext || '';
+			var p = {
+				ext: ext,
+				admin: (admin ? true : false),
+				module: path.resolve(cfg.path, addpath),
+				schema: path.resolve(path.resolve(App.path.schema,'./'+cfg.name), addpath),
+				schemapath: path.resolve(App.path.schema,'./'+cfg.name)
+			};
+			
+			var obj = {
+				path: p,
+				list:   function(){return List(p);},
+				get:    function(file){return Get(p, file);},
+				set:    function(file, data){return Set(p, file, data);},
+				delete: function(file){return Delete(p, file);} 
+			};
+			
+			return obj;
 		};
 		
+		//-- END --
 		return me;
 	};
-	
-	return {
-		Required: ['Acl', 'Gate'],	
-		Module: Module
-	}
+	return {Required: Required,	Module: Module}
 })();

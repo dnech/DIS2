@@ -2,6 +2,7 @@
 	"info": "Modules",
 	"list": [
 		"Logger",
+		"Configs",
 		"Sessions",
 		"Users",
 		"Acl",

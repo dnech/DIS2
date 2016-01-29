@@ -1,6 +1,11 @@
 {
-	"info":"Config module Files",
-	"download": "/files/:category/:file",
-	"upload": "/cfg/upload/",
-	"trace": false
+	"info":"Config module Configs",
+	"logger":{
+		"enable":true,
+		"data":false,
+		"time":false,
+		"milliseconds":false,
+		"level":0,
+		"prefix":"        "
+	}
 }
