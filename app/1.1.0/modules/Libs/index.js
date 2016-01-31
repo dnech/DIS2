@@ -292,11 +292,16 @@ module.exports = (function(){
 			
 			me.init = function(){
 				console.info('Init');
-				var lib = App.Configs.filebox(conf.name, './data', '.lib');
+				var lib = App.Configs.Box(conf.name, './data', '.lib');
 				console.param('lib', lib);
-				lib.set('temp1', {name:'temp'});
-				lib.set('temp2', {name:'temp'});
-				lib.delete('temp2');
+				lib.Set('temp1', {name:'temp'});
+				lib.Set('temp2', {name:'temp'});
+				lib.Delete('temp2');
+				
+				App.Direct.On({
+					Libs: lib.Direct
+				}, '#');
+				
 			};
 			
 			return me;

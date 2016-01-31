@@ -86,14 +86,17 @@ module.exports = (function(){
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
 			
-		function addFunctions(target, source, acl) {
-			if (typeof source === 'object') {
-				if (typeof target !== 'object') {target = {};}
+		function addFunctions(target, source, acl, info) {
+			if (typeof source == 'object') {
+				if (typeof target != 'object') {target = {};}
 				for (name in source) {
-					target[name] = addFunctions(target[name], source[name], acl);
+					/* _ пропускаем */
+					if (name.charAt(0) != '_') {
+						target[name] = addFunctions(target[name], source[name], acl, source['_'+name]);
+					}
 				}
-			} else if (typeof source === 'function') {
-				target = {acl: acl, fn: source};
+			} else if (typeof source == 'function') {
+				target = {acl: acl, fn: source, info:info};
 			}
 			return target;
 		};
@@ -153,13 +156,14 @@ module.exports = (function(){
 		'*');
 		
 		
-		me.GetFunctionJs = function(ns, path, name, not_object){
+		me.GetFunctionJs = function(ns, path, name, info, not_object){
 			var _ns = (typeof ns !== 'undefined') ? ns : me.config.namespace;
 			var _path = (typeof ns !== 'undefined') ? path : me.config.namespace+'.'+path;
+			info = (typeof info == 'string') ? ' /* '+info+' */ ' : '';
 			if (not_object) {
-				return name+' = function(param, ok, err){'+_ns+'Api.send(\''+_path+'.'+name+'\', param, ok, err);};\n';
+				return name+' = function(param, ok, err){'+info+_ns+'Api.send(\''+_path+'.'+name+'\', param, ok, err);};\n';
 			} else {
-				return name+': function(param, ok, err){'+_ns+'Api.send(\''+_path+'.'+name+'\', param, ok, err);},\n';
+				return name+': function(param, ok, err){'+info+_ns+'Api.send(\''+_path+'.'+name+'\', param, ok, err);},\n';
 			}
 		};
 		
@@ -169,7 +173,7 @@ module.exports = (function(){
 			function parse(obj, path, tabs){
 				for (name in obj){
 					if (typeof obj[name] === 'object' && typeof obj[name].fn === 'function') {
-						fnlist += tabs+me.GetFunctionJs(NameSpace, path, name);
+						fnlist += tabs+me.GetFunctionJs(NameSpace, path, name, obj[name].info);
 					} else if (typeof obj[name] === 'object') {
 						fnlist += tabs+name+':{\n';
 						parse(obj[name], path+'.'+name, tabs+'  ');
