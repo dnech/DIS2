@@ -100,14 +100,6 @@ module.exports = (function(){
 			}
 		};
 			
-		/* Удалить */
-		function Delete(p, file, ok, err){
-			if (p.admin) {
-				fs.unlinkSync(path.resolve(p.module, './'+file+p.ext));
-			}
-			fs.unlinkSync(path.resolve(p.schema, './'+file+p.ext));
-			if (typeof ok == 'function') {ok(true);}
-		};
 			
 		me.Box = function(module, addpath, ext, admin){
 			var cfg = App.modules[module].Config;
@@ -142,21 +134,36 @@ module.exports = (function(){
 			
 			return obj;
 		};
+
 		
-		function _List(dir, ext, cb){
-			async.waterfall([
-				function(next) { // Получить состояние директории
-					fs.stat(dir, next);
-				},
-				function(stat, next) { // Обработка статуса
-					if (stat.isDirectory()) {
-						next(null, dir);
-					} else {
-						next('is not a directory');
+		/* Список */
+		function List(box, callback){
+			
+			function concat(arr1, arr2){
+				var files = {};
+				arr1.forEach(function(item) {
+					files[item.name] = item;
+					delete(files[item.name].name);
+				});
+				arr2.forEach(function(item) {
+					if (typeof(files[item.name]) === 'undefined') {
+						files[item.name] = item;
+						delete(files[item.name].name);
 					}
-				},
-				fs.readdir, // Чтение файлов
-				function(list, next){ // Фильтрация файлов
+				});
+				return files;
+			}
+			
+			function _List(dir, ext, callback){
+				function start(err, stat) {
+					if (stat && stat.isDirectory()) {
+						return fs.readdir(dir, step1);
+					} 
+					return stop('is not a directory');
+				}
+				
+				function step1(err, list){
+					if (err) {return stop(err);}
 					var files = [];
 					list.forEach(function(item, i, arr) {
 						if (item.substring(item.length - ext.length) === ext) {
@@ -164,15 +171,13 @@ module.exports = (function(){
 						}
 					});
 					files.sort();
-					next(null, files);
-				},
-				function (files, next){ // Получение статусов файлов
 					async.map(files, fs.stat, function (err, stats) {
-						if (err) {next(err);}
-						next(null, files, stats);
+						if (err) {return stop(err);}
+						step2(files, stats);
 					});
-				},
-				function (files, stats, next){
+				}
+				
+				function step2(files, stats){
 					var f = [];
 					files.forEach(function(item, i, arr) {
 						f.push({
@@ -186,67 +191,104 @@ module.exports = (function(){
 								ctime: stats[i].ctime
 							}});
 					});
-					next(null, f);
+					stop(null, f);
 				}
-			], function(err, data){
-				if (err) {
-					cb(null, []);
-				} else {
-					cb(null, data);
-				}
-			});
-		};
-
-		function List(param, callback){
-			var module = path.resolve(conf.path, './data');
-			var schema = path.resolve(path.resolve(App.path.schema,'./'+conf.name), './data');
-	
+				
+				function stop(err, data) {
+					if (err) {
+						callback(null, []);
+					} else {
+						callback(null, data);
+					}
+				}			
+				fs.stat(dir, start);
+			};
+			
 			async.parallel([
-				function(cb){_List(module, '.txt', cb)},
-				function(cb){_List(schema, '.txt', cb)}
+				function(cb){_List(box.module_data, box.ext, cb)},
+				function(cb){_List(box.schema_data, box.ext, cb)}
 			], function(err, data){
 				data[0].forEach(function(item) {item.type = 'system';});
 				data[1].forEach(function(item) {item.type = 'scheme';});
-				callback(err, data[0].concat(data[1]));
+				
+				if (box.priority_scheme){
+					callback(err, concat(data[1], data[0]));
+				} else {
+					callback(err, concat(data[0], data[1]));
+				}
 			});
 			
 		};
 		
+		/* Удалить */
+		function Delete(box, name, callback){
+			async.parallel([
+				function(cb){
+					if (!box.root) {return cb(null, false)};
+					fs.unlink(path.resolve(box.module_data, name + box.ext), function(err){
+						cb(null, (err) ? false : true);
+					});
+				},
+				function(cb){
+					fs.unlink(path.resolve(box.schema_data, name + box.ext), function(err){
+						cb(null, (err) ? false : true);
+					});
+				}
+			], function(err, data){
+				callback(!(data[0] || data[1]));
+			});	
+		};
+		
+		me.Boxing = function(module, config){
+			if (typeof(module) !== 'string' || typeof(App.modules[module]) === 'undefined') {return;}
+			
+			config = App.utils.extend(true, {}, {
+				path: '',
+				ext: '.json',
+				json: true,
+				root: false,
+				priority_scheme: false
+			}, config);
+			
+			var module_config  = App.modules[module].Config;
+			config.module_root = module_config.path;
+			config.module_data = path.resolve(config.module_root, config.path);
+			config.schema_root = path.resolve(App.path.schema, module);
+			config.schema_data = path.resolve(config.schema_root, config.path),
+			
+			console.param('Boxing', config);
+			return {
+				config: config,
+				List:   function(callback){List(config, callback);},
+				Delete: function(name, callback){Delete(config, name, callback);}
+			};
+		};
+		
 		me.init = function(){
 			
+			var box = me.Boxing('Libs', {
+				path: 'data',
+				ext: '.lib',
+				//root: true
+			});
+			
+			if (box){
+				console.log('box', box);
+				
+				box.List(function(err, data){
+					console.log('data', data);
+				});
+				
+				box.Delete('del', function(err){
+					console.log('Delete err', err);
+				});
+			}
+			
+			/*
 			List('', function(err, data){
 				console.log('err', err);
 				console.log('data', data);
 			});
-			
-			/*
-			console.time('Create');
-			for (var i=1; i<=50000; i++ ) {
-				fs.writeFileSync(path.resolve(p, 'm'+i+'.txt'), 'Hello Node.js:'+i);
-			}
-			console.timeEnd('Create');
-			*/
-			
-			/*
-			console.time('GetAsync');
-			test(path.resolve(conf.path, './data'), '.txt', function(err, data){
-				if (err) {
-					console.timeEnd('GetAsync');
-					console.log('err', err);
-				} else {
-					console.timeEnd('GetAsync');
-					//console.log('data', data);
-				}
-			});	
-			*/	
-			/*	
-			console.time('GetSync');
-			var p = {
-				ext:    '.txt',
-				module: path.resolve(conf.path, './data'),
-			};
-			List(p);
-			console.timeEnd('GetSync');
 			*/
 		};
 			

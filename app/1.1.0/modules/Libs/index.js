@@ -292,7 +292,7 @@ module.exports = (function(){
 			
 			me.init = function(){
 				console.info('Init');
-				var lib = App.Configs.Box(conf.name, './data', '.lib');
+				/*var lib = App.Configs.Box(conf.name, './data', '.lib');
 				console.param('lib', lib);
 				lib.Set('temp1', {name:'temp'});
 				lib.Set('temp2', {name:'temp'});
@@ -301,7 +301,7 @@ module.exports = (function(){
 				App.Direct.On({
 					Libs: lib.Direct
 				}, '#');
-				
+				*/
 			};
 			
 			return me;
