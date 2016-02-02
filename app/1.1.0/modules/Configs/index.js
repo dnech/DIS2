@@ -21,120 +21,19 @@ module.exports = (function(){
 				return false;
 			}
 		};	
-			
-		function List(p){	
-			var list = [];	
-			
-			function scan(dir, type){
-				if (exist(dir)) {
-					fs.readdirSync(dir).forEach(function(item, i, arr) {
-						if (item.substring(item.length - p.ext.length) === p.ext) {
-							var stats = fs.statSync(path.resolve(dir, item));
-							list.push({
-								name: item.substring(0, item.length - p.ext.length),
-								type: type,
-								stat: {
-									size: stats.size,
-									birthtime: stats.birthtime,
-									atime: stats.atime,
-									mtime: stats.mtime,
-									ctime: stats.ctime
-								}
-							});
-						}
-					});
-				}
-			};
-			
-			//if (p.admin) {
-				scan(p.module, 'system');
-			//	scan(p.schema, 'scheme');
-			//} else {
-			//	scan(p.schema, 'scheme');
-			//	scan(p.module, 'system');
-			//}
-			
-			
-			//if (cb) {cb(null, list);}
-			return list;
-		};
 		
-		/* Установить */
-		function Set(p, file, data, ok, err){
-			try {
-				if (p.admin) {
-					if (!exist(p.module)){fs.mkdirSync(p.module);}
-					var file = path.resolve(p.module, './'+file+p.ext);
-				} else {
-					if (!exist(p.schemapath)){fs.mkdirSync(p.schemapath);}
-					if (!exist(p.schema)){fs.mkdirSync(p.schema);}
-					var file = path.resolve(p.schema, './'+file+p.ext);
-				}	
-				if (p.json) { data = JSON.stringify(data); }
-				fs.writeFileSync(file, data, 'utf8');
-				if (typeof ok == 'function') {ok(true);}
-			} catch(error) {
-				if (typeof err == 'function') {err(error);}
-			}
-		};
-			
-		/* Получить */
-		function Get(p, file, ok, err){
-			var data = '';
-			
-			try { path.resolve(dir, item)
-				data = fs.readFileSync(path.resolve(p.module, './'+file+p.ext), "utf8").toString('utf8');
-			} catch(error) {
-				try {
-					data = fs.readFileSync(path.resolve(p.schema, './'+file+p.ext), "utf8").toString('utf8');
-				} catch(error) {
-					if (typeof err == 'function') {err(error);}
-				}
-			}
-			
-			try {
-				if (p.json) { data = JSON.parse(data); }
-				if (typeof ok == 'function') {ok(data);}
-			} catch(error) {
-				if (typeof err == 'function') {err(error);}
-			}
-		};
-			
-			
-		me.Box = function(module, addpath, ext, admin){
-			var cfg = App.modules[module].Config;
-			addpath = addpath || '';
-			ext = ext || '';
-			var p = {
-				ext: ext,
-				json: true,
-				admin: (admin ? true : false),
-				module: path.resolve(cfg.path, addpath),
-				schema: path.resolve(path.resolve(App.path.schema,'./'+cfg.name), addpath),
-				schemapath: path.resolve(App.path.schema,'./'+cfg.name)
-			};
-			
-			var obj = {
-				path: p,
-				List:   function(ok, err){List(p, ok, err);},
-				Get:    function(file, ok, err){Get(p, file, ok, err);},
-				Set:    function(file, data, ok, err){Set(p, file, data, ok, err);},
-				Delete: function(file, ok, err){Delete(p, file, ok, err);},
-				Direct: {
-					_List:	 'Info: Get a list of files. Param: (any) not used. Return: array of information about the files',
-					_Get:	 'Info: Get the contents of the file. Param: name. Return: file contents',
-					_Set:    'Info: Set the contents of the file. Param: {name, data}. Return: true',
-					_Delete: 'Info: Delete a file. Param: name. Return: true',
-					List:	function(ssid, param, ok, err) {List(p, ok, err);},
-					Get:	function(ssid, param, ok, err) {Get(p, param, ok, err);},
-					Set:	function(ssid, param, ok, err) {Set(p, param.name, param.data, ok, err);},
-					Delete:	function(ssid, param, ok, err) {Delete(p, param, ok, err);}
-				}
-			};
-			
-			return obj;
-		};
-
+		/*	
+		Direct: {
+			_List:	 'Info: Get a list of files. Param: (any) not used. Return: array of information about the files',
+			_Get:	 'Info: Get the contents of the file. Param: name. Return: file contents',
+			_Set:    'Info: Set the contents of the file. Param: {name, data}. Return: true',
+			_Delete: 'Info: Delete a file. Param: name. Return: true',
+			List:	function(ssid, param, ok, err) {List(p, ok, err);},
+			Get:	function(ssid, param, ok, err) {Get(p, param, ok, err);},
+			Set:	function(ssid, param, ok, err) {Set(p, param.name, param.data, ok, err);},
+			Delete:	function(ssid, param, ok, err) {Delete(p, param, ok, err);}
+		}
+		*/
 		
 		/* Список */
 		function List(box, callback){
@@ -220,35 +119,99 @@ module.exports = (function(){
 			
 		};
 		
+		/* Получить */
+		function Get(box, name, callback) {
+			async.parallel({
+				module: function(cb){
+					fs.readFile(path.resolve(box.module_data, name + box.ext), 'utf8', function(err, data){
+						cb(null, (err) ? false : data);
+					});
+				},
+				scheme: function(cb){
+					fs.readFile(path.resolve(box.schema_data, name + box.ext), 'utf8', function(err, data){
+						cb(null, (err) ? false : data);
+					});
+				}
+			}, function(err, data){
+				if (!data.scheme && !data.module) {return callback('not found');}
+				var ret = (box.priority_scheme) ? (data.scheme || data.module) : (data.module || data.scheme);
+				if (box.json) {
+					try {
+						ret = JSON.parse(ret);
+					} catch(error) {
+						return callback(error);
+					}
+				}
+				callback(err, ret);
+			});
+		}
+		
+		/* Установить */
+		function Set(box, name, value, callback) {
+			
+			if (box.json) {
+				try {
+					value = JSON.stringify(value);
+				} catch(error) {
+					return callback(error);
+				}
+			}
+			async.parallel({
+				module: function(cb){
+					if (!box.root) {return cb(null, false)};
+					
+					if (!exist(box.module_data)){fs.mkdirSync(box.module_data);}
+					
+					fs.writeFile(path.resolve(box.module_data, name + box.ext), value, 'utf8', function(err){
+						cb(null, (err) ? false : true);
+					});
+				},
+				scheme: function(cb){
+					if (box.root) {return cb(null, false)};
+					
+					if (!exist(box.schema_root)){fs.mkdirSync(box.schema_root);}
+					if (!exist(box.schema_data)){fs.mkdirSync(box.schema_data);}
+					
+					fs.writeFile(path.resolve(box.schema_data, name + box.ext), value, 'utf8', function(err){
+						cb(null, (err) ? false : true);
+					});
+				}
+			}, function(err, data){
+				callback(!(data.module || data.scheme));
+			});
+		}
+		
+		
 		/* Удалить */
 		function Delete(box, name, callback){
-			async.parallel([
-				function(cb){
+			async.parallel({
+				module: function(cb){
 					if (!box.root) {return cb(null, false)};
 					fs.unlink(path.resolve(box.module_data, name + box.ext), function(err){
 						cb(null, (err) ? false : true);
 					});
 				},
-				function(cb){
+				scheme: function(cb){
 					fs.unlink(path.resolve(box.schema_data, name + box.ext), function(err){
 						cb(null, (err) ? false : true);
 					});
 				}
-			], function(err, data){
-				callback(!(data[0] || data[1]));
+			}, function(err, data){
+				callback(!(data.module || data.scheme));
 			});	
 		};
 		
-		me.Boxing = function(module, config){
+		me.Box = function(module, cfg){
 			if (typeof(module) !== 'string' || typeof(App.modules[module]) === 'undefined') {return;}
-			
-			config = App.utils.extend(true, {}, {
+		
+			var config = App.utils.extend(true, {
 				path: '',
 				ext: '.json',
 				json: true,
 				root: false,
 				priority_scheme: false
-			}, config);
+			}, cfg);
+			
 			
 			var module_config  = App.modules[module].Config;
 			config.module_root = module_config.path;
@@ -258,30 +221,48 @@ module.exports = (function(){
 			
 			console.param('Boxing', config);
 			return {
-				config: config,
+				Config: function(cfg){config = App.utils.extend(true, {}, config, cfg); return config;},
 				List:   function(callback){List(config, callback);},
+				Get:    function(name, callback){Get(config, name, callback);},
+				Set:    function(name, value, callback){Set(config, name, value, callback);},
 				Delete: function(name, callback){Delete(config, name, callback);}
 			};
 		};
 		
 		me.init = function(){
 			
-			var box = me.Boxing('Libs', {
+			var box = me.Box(conf.name, {
 				path: 'data',
 				ext: '.lib',
-				//root: true
+				priority_scheme: true
 			});
 			
 			if (box){
-				console.log('box', box);
-				
+				console.param('Box', box);
+				console.param('Box Config', box.Config());		
 				box.List(function(err, data){
-					console.log('data', data);
-				});
-				
-				box.Delete('del', function(err){
-					console.log('Delete err', err);
-				});
+					console.log('Box List', !err, data);	
+					box.Set('test_scheme', 'Test scheme', function(err){
+						console.log('Box scheme Set', !err);	
+						box.Get('test_scheme', function(err, data){
+							console.log('Box scheme Get', !err, data);		
+							box.Delete('test_scheme', function(err){
+								console.log('Box scheme Delete', !err);							
+								box.Config({root:true});
+								box.Set('test_module', 'Test module', function(err){
+									console.log('Box module Set', !err);
+									box.Get('test_module', function(err, data){
+										console.log('Box module Get', !err, data);
+										box.Delete('test_module', function(err){
+											console.log('Box module Delete', !err);
+											console.param('Box Test', 'OK');
+										});
+									});
+								});
+							});		
+						});
+					});	
+				});	
 			}
 			
 			/*
