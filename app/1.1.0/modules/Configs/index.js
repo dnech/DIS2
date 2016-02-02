@@ -111,9 +111,9 @@ module.exports = (function(){
 				data[1].forEach(function(item) {item.type = 'scheme';});
 				
 				if (box.priority_scheme){
-					callback(err, concat(data[1], data[0]));
+					if (typeof callback == 'function') callback(err, concat(data[1], data[0]));
 				} else {
-					callback(err, concat(data[0], data[1]));
+					if (typeof callback == 'function') callback(err, concat(data[0], data[1]));
 				}
 			});
 			
@@ -139,10 +139,11 @@ module.exports = (function(){
 					try {
 						ret = JSON.parse(ret);
 					} catch(error) {
-						return callback(error);
+						if (typeof callback == 'function') callback(error);
+						return;
 					}
 				}
-				callback(err, ret);
+				if (typeof callback == 'function') callback(err, ret);
 			});
 		}
 		
@@ -153,7 +154,8 @@ module.exports = (function(){
 				try {
 					value = JSON.stringify(value);
 				} catch(error) {
-					return callback(error);
+					if (typeof callback == 'function') callback(error);
+					return;
 				}
 			}
 			async.parallel({
@@ -177,7 +179,7 @@ module.exports = (function(){
 					});
 				}
 			}, function(err, data){
-				callback(!(data.module || data.scheme));
+				if (typeof callback == 'function') callback(!(data.module || data.scheme));
 			});
 		}
 		
@@ -197,7 +199,7 @@ module.exports = (function(){
 					});
 				}
 			}, function(err, data){
-				callback(!(data.module || data.scheme));
+				if (typeof callback == 'function') callback(!(data.module || data.scheme));
 			});	
 		};
 		
@@ -225,7 +227,17 @@ module.exports = (function(){
 				List:   function(callback){List(config, callback);},
 				Get:    function(name, callback){Get(config, name, callback);},
 				Set:    function(name, value, callback){Set(config, name, value, callback);},
-				Delete: function(name, callback){Delete(config, name, callback);}
+				Delete: function(name, callback){Delete(config, name, callback);},
+				Direct: {
+					_List:	 'Info: Get a list of files. Param: (any) not used. Return: array of information about the files',
+					_Get:	 'Info: Get the contents of the file. Param: name. Return: file contents',
+					_Set:    'Info: Set the contents of the file. Param: {name, data}. Return: true',
+					_Delete: 'Info: Delete a file. Param: name. Return: true',
+					List:	function(ssid, param, ok, err) {List(config, function(error, data){if (!error) {ok(data);} else {err(error)}});},
+					Get:	function(ssid, param, ok, err) {Get(config, param, function(error, data){if (!error) {ok(data);} else {err(error)}});},
+					Set:	function(ssid, param, ok, err) {Set(config, param.name, param.data, function(error, data){if (!error) {ok(data);} else {err(error)}});},
+					Delete:	function(ssid, param, ok, err) {Delete(config, param, function(error, data){if (!error) {ok(data);} else {err(error)}});}
+				}
 			};
 		};
 		
