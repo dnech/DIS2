@@ -1,9 +1,9 @@
 /*  MODULE CONFIGS */	
 module.exports = (function(){
 	var Required = ['Logger'];
-	var Module = function(conf){
+	var Module   = function(conf){
 		var me = App.namespace(conf.name, conf);
-		//-- BEGIN --
+		// ********** BEGIN **********
 		
 		var async = require('async'); 
 		var path  = require('path');
@@ -11,31 +11,21 @@ module.exports = (function(){
 		
 		// Logger.console
 		var console = App.Logger.console(conf.name, me.config.logger);
-		console.info('Load');
+		console.info('Load...');
 		
-		function exist(p){
+		// ********** PRIVATE **********
+		
+		// Проверка существования папки или файла
+		function exist(df){
 			try {
-				fs.accessSync(p, fs.F_OK);
+				fs.accessSync(df, fs.F_OK);
 				return true;
 			} catch (e) {
 				return false;
 			}
-		};	
+		};
 		
-		/*	
-		Direct: {
-			_List:	 'Info: Get a list of files. Param: (any) not used. Return: array of information about the files',
-			_Get:	 'Info: Get the contents of the file. Param: name. Return: file contents',
-			_Set:    'Info: Set the contents of the file. Param: {name, data}. Return: true',
-			_Delete: 'Info: Delete a file. Param: name. Return: true',
-			List:	function(ssid, param, ok, err) {List(p, ok, err);},
-			Get:	function(ssid, param, ok, err) {Get(p, param, ok, err);},
-			Set:	function(ssid, param, ok, err) {Set(p, param.name, param.data, ok, err);},
-			Delete:	function(ssid, param, ok, err) {Delete(p, param, ok, err);}
-		}
-		*/
-		
-		/* Список */
+		// Список файлов
 		function List(box, callback){
 			
 			function concat(arr1, arr2){
@@ -119,7 +109,7 @@ module.exports = (function(){
 			
 		};
 		
-		/* Получить */
+		// Получить значение из файла
 		function Get(box, name, callback) {
 			async.parallel({
 				module: function(cb){
@@ -145,9 +135,9 @@ module.exports = (function(){
 				}
 				if (typeof callback == 'function') callback(err, ret);
 			});
-		}
+		};
 		
-		/* Установить */
+		// Установить значения в файл
 		function Set(box, name, value, callback) {
 			
 			if (box.json) {
@@ -181,10 +171,9 @@ module.exports = (function(){
 			}, function(err, data){
 				if (typeof callback == 'function') callback(!(data.module || data.scheme));
 			});
-		}
+		};
 		
-		
-		/* Удалить */
+		// Удалить файл
 		function Delete(box, name, callback){
 			async.parallel({
 				module: function(cb){
@@ -203,6 +192,9 @@ module.exports = (function(){
 			});	
 		};
 		
+		// ********** PUBLIC **********
+		
+		// Контейнер работы с файлами
 		me.Box = function(module, cfg){
 			if (typeof(module) !== 'string' || typeof(App.modules[module]) === 'undefined') {return;}
 		
@@ -214,14 +206,12 @@ module.exports = (function(){
 				priority_scheme: false
 			}, cfg);
 			
-			
 			var module_config  = App.modules[module].Config;
 			config.module_root = module_config.path;
 			config.module_data = path.resolve(config.module_root, config.path);
 			config.schema_root = path.resolve(App.path.schema, module);
-			config.schema_data = path.resolve(config.schema_root, config.path),
+			config.schema_data = path.resolve(config.schema_root, config.path);
 			
-			console.param('Boxing', config);
 			return {
 				Config: function(cfg){config = App.utils.extend(true, {}, config, cfg); return config;},
 				List:   function(callback){List(config, callback);},
@@ -233,15 +223,18 @@ module.exports = (function(){
 					_Get:	 'Info: Get the contents of the file. Param: name. Return: file contents',
 					_Set:    'Info: Set the contents of the file. Param: {name, data}. Return: true',
 					_Delete: 'Info: Delete a file. Param: name. Return: true',
-					List:	function(ssid, param, ok, err) {List(config, function(error, data){if (!error) {ok(data);} else {err(error)}});},
-					Get:	function(ssid, param, ok, err) {Get(config, param, function(error, data){if (!error) {ok(data);} else {err(error)}});},
-					Set:	function(ssid, param, ok, err) {Set(config, param.name, param.data, function(error, data){if (!error) {ok(data);} else {err(error)}});},
-					Delete:	function(ssid, param, ok, err) {Delete(config, param, function(error, data){if (!error) {ok(data);} else {err(error)}});}
+					List:	function(ssid, param, callback) {List(config, callback);},
+					Get:	function(ssid, param, callback) {Get(config, param, callback);},
+					Set:	function(ssid, param, callback) {Set(config, param.name, param.data, callback);},
+					Delete:	function(ssid, param, callback) {Delete(config, param, callback);}
 				}
 			};
 		};
 		
+		
+		// ********** INIT **********
 		me.init = function(){
+			console.info('Init');
 			
 			var box = me.Box(conf.name, {
 				path: 'data',
@@ -251,42 +244,38 @@ module.exports = (function(){
 			
 			if (box){
 				console.param('Box', box);
-				console.param('Box Config', box.Config());		
-				box.List(function(err, data){
-					console.log('Box List', !err, data);	
-					box.Set('test_scheme', 'Test scheme', function(err){
-						console.log('Box scheme Set', !err);	
-						box.Get('test_scheme', function(err, data){
-							console.log('Box scheme Get', !err, data);		
-							box.Delete('test_scheme', function(err){
-								console.log('Box scheme Delete', !err);							
-								box.Config({root:true});
-								box.Set('test_module', 'Test module', function(err){
-									console.log('Box module Set', !err);
-									box.Get('test_module', function(err, data){
-										console.log('Box module Get', !err, data);
-										box.Delete('test_module', function(err){
-											console.log('Box module Delete', !err);
-											console.param('Box Test', 'OK');
-										});
-									});
-								});
-							});		
-						});
-					});	
+				console.param('Box Config', box.Config());
+				console.config({prefix:""});				
+				
+				async.series([
+					function(next){console.log('Test List'); box.List(next);},
+					function(next){console.log('Test scheme Set'); box.Set('test_scheme', 'Test scheme', next);},
+					function(next){console.log('Test scheme Get'); box.Get('test_scheme', next);},
+					function(next){console.log('Test scheme Delete'); box.Delete('test_scheme', next);},
+					function(next){
+						console.log('Test scheme: OK!');							
+						box.Config({root:true});
+						console.log('Test module Set'); 
+						box.Set('test_module', 'Test module', next); 
+					},
+					function(next){console.log('Test module Get'); box.Get('test_module', next);},
+					function(next){console.log('Test module Delete'); box.Delete('test_module', next);}
+				], function(err, data){
+					if (err) {
+						console.log('Test: ERROR!', err);
+					} else {
+						console.log('Test module: OK!');
+					}
+					console.config({prefix:""});
 				});	
+				
+				
+				
 			}
-			
-			/*
-			List('', function(err, data){
-				console.log('err', err);
-				console.log('data', data);
-			});
-			*/
 		};
 			
-		//-- END --
+		// ********** END **********
 		return me;
 	};
-	return {Required: Required,	Module: Module}
+	return {Required: Required,	Module: Module};
 })();

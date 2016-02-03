@@ -1,43 +1,46 @@
-/*
-	0 все атрибуты по умолчанию
-	1 жирный шрифт (интенсивный цвет)
-	2 полу яркий цвет (тёмно-серый, независимо от цвета)
-	4 выделение (ярко-белый, независимо от цвета)
-	5 мигающий
-	7 реверсия (знаки приобретают цвет фона, а фон -- цвет знаков)
-	22 установить нормальную интенсивность
-	24 отменить подчеркивание
-	25 отменить мигание
-	27 отменить реверсию
-	-ТЕКСТ-
-	30 чёрный цвет знаков
-	31 красный цвет знаков
-	32 зелёный цвет знаков
-	33 коричневый цвет знаков
-	34 синий цвет знаков
-	35 фиолетовый цвет знаков
-	36 цвет морской волны знаков
-	37 серый цвет знаков
-	-ФОН-
-	40 чёрный цвет фона
-	41 красный цвет фона
-	42 зелёный цвет фона
-	43 коричневый цвет фона
-	44 синий цвет фона
-	45 фиолетовый цвет фона
-	46 цвет морской волны фона
-	47 серый цвет фона
-*/
-
-var util = require('util');
-	
 /*  MODULE LOGGER */	
 module.exports = (function(){
-
-	var Module = function(conf){
+	var Required = [];
+	var Module   = function(conf){
 		var me = App.namespace(conf.name, conf);
+		// ********** BEGIN **********
+		
+		var util = require('util');
+		
+		// ********** PRIVATE **********
 		
 		var ModuleList = {};
+		
+		/*
+			0 все атрибуты по умолчанию
+			1 жирный шрифт (интенсивный цвет)
+			2 полу яркий цвет (тёмно-серый, независимо от цвета)
+			4 выделение (ярко-белый, независимо от цвета)
+			5 мигающий
+			7 реверсия (знаки приобретают цвет фона, а фон -- цвет знаков)
+			22 установить нормальную интенсивность
+			24 отменить подчеркивание
+			25 отменить мигание
+			27 отменить реверсию
+			-ТЕКСТ-
+			30 чёрный цвет знаков
+			31 красный цвет знаков
+			32 зелёный цвет знаков
+			33 коричневый цвет знаков
+			34 синий цвет знаков
+			35 фиолетовый цвет знаков
+			36 цвет морской волны знаков
+			37 серый цвет знаков
+			-ФОН-
+			40 чёрный цвет фона
+			41 красный цвет фона
+			42 зелёный цвет фона
+			43 коричневый цвет фона
+			44 синий цвет фона
+			45 фиолетовый цвет фона
+			46 цвет морской волны фона
+			47 серый цвет фона
+		*/
 		
 		// Color
 		function color(cod, str, disable) {
@@ -101,7 +104,9 @@ module.exports = (function(){
 		function getTypeFunction(module, key){
 			return function(){logger(module, key, arguments);}
 		}; 
-
+		
+		// ********** PUBLIC **********
+		
 		// MAIN OBJECT
 		me.console = function(module, cfg){
 			ModuleList[module] = me.config.default;
@@ -121,29 +126,29 @@ module.exports = (function(){
 		};
 	
 		
-		/* Init module */
+		// ********** INIT **********
 		me.init = function(){
-			//test
-			var test = me.console('Logger', {date: false, time:false, prefix:'     '});
-			test.config({modulename:true, level: 0});
+			// test
+			var console = me.console('Logger', {date: false, time:false, prefix:'     '});
+			console.config({modulename:true, level: 0});
 			
-			test.time('Time');
-			test.trace('Test trace message.');
-			test.debug('Test debug message.');
-			test.info('Test info message.');
-			test.warning('Test warning message.');
-			test.error('Test error message.');
-			test.fatal('Test fatal message.');
-			test.param('Name', [123, {test:123}]);
-			test.timeEnd('Time');
-
+			console.info('Init');
+			
+			console.time('Time');
+			console.trace('Test trace message.');
+			console.debug('Test debug message.');
+			console.info('Test info message.');
+			console.warning('Test warning message.');
+			console.error('Test error message.');
+			console.fatal('Test fatal message.');
+			console.param('Name', [123, {test:123}]);
+			console.timeEnd('Time');
+			
+			console.config({prefix:""});
 		};
 		
+		// ********** END **********
 		return me;
 	};
-	
-	return {
-		Required: [],	
-		Module: Module
-	}
+	return {Required: Required, Module: Module};
 })();

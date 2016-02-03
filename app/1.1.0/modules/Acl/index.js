@@ -1,8 +1,13 @@
-/*  MODULE */
-
+/*  MODULE ACL */
 module.exports = (function(){	
+	var Required = ['Logger', 'Users'];
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
+		// ********** BEGIN **********
+		
+		// Logger.console
+		var console = App.Logger.console(conf.name, me.config.logger);
+		console.info('Load...');
 		
 		// Users:
 		//   Admin
@@ -16,9 +21,10 @@ module.exports = (function(){
 		//   All
 		//   Module1.*
 		//   Module2.function1
-		//   Module2.function2
-		
+		//   Module2.function2		
 		// RESOURCES
+		
+		// ********** PRIVATE **********
 		
 		var ResourceList = {};
 		var ResourceListFn = {};
@@ -65,12 +71,17 @@ module.exports = (function(){
 		};
 		*/
 		
+		// ********** PUBLIC **********
+		
 		me.Default = function(){
-			return true;
+			return [me.config.default];
 		};
 		
-		me.Declare = function(){
-			return true;
+		me.Declare = function(acl){
+			if (typeof acl === 'string') {
+				acl = [acl];
+			}
+			return acl;
 		};
 		
 		me.GetRights = function (ssid){
@@ -83,16 +94,17 @@ module.exports = (function(){
 		// проверка наличия у сессии ролей с разрешенными группами
 		me.Check = function (ssid, action) {
 			// По ssid получае
-			
 			return true;
 		};
 		
+		// ********** INIT **********
 		me.init = function(){
-			log.param('    Acl:', ResourceList);
+			console.info('Init');
+			console.param('Acl', ResourceList);
 		};
 		
+		// ********** END **********
 		return me;
 	};
-	
-	return {Required:['Users'], Module:Module};
+	return {Required:Required, Module:Module};
 })();
