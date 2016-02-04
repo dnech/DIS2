@@ -1,0 +1,6 @@
+{
+	"acl": "*",
+	"script": true,
+	"sandbox": "{App: App,\n render: function(info){\n console.log('Render', info);\n },\n text: function(info){\n return info+')))';\n},\n name: name,\n console: console,\n require: require\n}",
+	"src": "return function(callback){render('SCRIPT');var path = require('path');var JUST = require('just');var just = new JUST({ root : path.resolve(App.Libs.path, 'view'), useCache : true, ext : '.html' });just.render('page', { title: text('Hello, World!') }, callback);};"
+}

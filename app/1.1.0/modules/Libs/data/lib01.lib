@@ -1,7 +1,0 @@
-{
-	"html": "",
-	"css": "",
-	"js": "$(document).ready(function(){console.log('Runing');});",
-	"acl": "*",
-	"description": "1"
-}

@@ -23,14 +23,19 @@ module.exports = (function(){
 			'E006': 'Bad request type, must be POST.'
 		};
 		
+		var errSting = function(err){
+			console.trace('errSting', err);
+			return ''+err;
+		};
+		
 		var SendOk = function(name, param, ans){
 			if (typeof ans === 'object') {ans = JSON.stringify(ans);}
 			return JSON.stringify({success: true, query:{cmd: name, param:param}, result:ans});
-		}
+		};
 		
 		var SendError = function(cod, error, name, param){
 			return JSON.stringify({success: false, cod:cod, error:error, msg:ErrorList[cod], query:{cmd: name, param:param}});
-		}
+		};
 	
 		// Поиск функции по строковому пути
 		var FindFn = function(namespace, name){
@@ -66,7 +71,7 @@ module.exports = (function(){
 						param = JSON.parse('{"data":'+query.param+'}').data;
 					}
 				} catch(err) {
-					res.end(SendError('E002', err, query.name, query.param));
+					res.end(SendError('E002', errSting(err), query.name, query.param));
 					return;
 				}	
 				
@@ -82,7 +87,7 @@ module.exports = (function(){
 								data = modify.data;
 							}
 							if (err) { // ERROR 
-								res.end(SendError('E004', err, query.name, query.param));
+								res.end(SendError('E004', errSting(err), query.name, query.param));
 							} else { // OK
 								res.end(SendOk(query.name, query.param, JSON.stringify(data)));
 							}
@@ -98,7 +103,8 @@ module.exports = (function(){
 						*/
 					);
 				} catch(err) {
-					res.end(SendError('E003', err, query.name, query.param));
+					console.error('DirectRun', err);
+					res.end(SendError('E003', errSting(err), query.name, query.param));
 				}	
 				
 			} else {
