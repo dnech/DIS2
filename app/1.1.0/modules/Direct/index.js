@@ -216,43 +216,43 @@ module.exports = (function(){
 			parse(DirectFunctions, NameSpace, '  ');
 					
 			/* ==================================================================== */
-			var ret = '';
-			ret += NameSpace+'Api = {\n';
-			ret += ' trace: '+me.config.trace+',\n';
-			ret += ' ssid: "'+ssid+'",\n';
-			ret += ' send: function(name, param, callback){\n';
-			ret += '	if ('+NameSpace+'Api.trace) {console.time(name);};\n';
-			ret += '	param = JSON.stringify(param);\n';
-			ret += '	var url=location.protocol+"//"+location.host+"'+base_url+me.config.direct_url+'";\n';
-			ret += '	$.ajax({\n';
-			ret += '	  method: "POST",\n';
-			ret += '	  url: url,\n';
-			ret += '	  data: {ssid:'+NameSpace+'Api.ssid, data:{name: name, param: param}}\n';
-			ret += '	})\n';
-			ret += '	  .done(function(msg) {\n';
-			ret += '		try {\n';
-			ret += '			var tAnswer = JSON.parse(\'{"data":\'+msg+\'}\').data;\n';
-			ret += '			if (tAnswer.success) {\n';
-			ret += '				var tRes = tAnswer.result;\n';
-			ret += '				if (typeof tRes !== \'undefined\') {\n';
-			ret += '					tRes = JSON.parse(\'{"data":\'+tRes+\'}\').data;\n';
-			ret += '				}\n';
-			ret += '				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n';
-			ret += '				if (typeof callback === \'function\') {callback(null, tRes);}\n';
-			ret += '			} else {\n';
-			ret += '				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n';
-			ret += '				if (typeof callback === \'function\') {callback(tAnswer);}\n';
-			ret += '			}\n';
-			ret += '		} catch(error) {\n';
-			ret += '			console.error(\'Unknow\', error);\n';
-			ret += '			if (typeof callback === \'function\') {callback(error);}\n';
-			ret += '		}\n';
-			ret += '	});\n';
-			ret += '}};\n';
-			ret += '\n';
-			ret += NameSpace+' = {\n';
-			ret += fnlist
-			ret += '};\n';
+			var ret = ''+
+				NameSpace+'Api = {\n'+
+				' trace: '+me.config.trace+',\n'+
+				' ssid: "'+ssid+'",\n'+
+				' send: function(name, param, callback){\n'+
+				'	if ('+NameSpace+'Api.trace) {console.time(name);};\n'+
+				'	param = JSON.stringify(param);\n'+
+				'	var url=location.protocol+"//"+location.host+"'+base_url+me.config.direct_url+'";\n'+
+				'	$.ajax({\n'+
+				'	  method: "POST",\n'+
+				'	  url: url,\n'+
+				'	  data: {ssid:'+NameSpace+'Api.ssid, data:{name: name, param: param}}\n'+
+				'	})\n'+
+				'	  .done(function(msg) {\n'+
+				'		try {\n'+
+				'			var tAnswer = JSON.parse(\'{"data":\'+msg+\'}\').data;\n'+
+				'			if (tAnswer.success) {\n'+
+				'				var tRes = tAnswer.result;\n'+
+				'				if (typeof tRes !== \'undefined\') {\n'+
+				'					tRes = JSON.parse(\'{"data":\'+tRes+\'}\').data;\n'+
+				'				}\n'+
+				'				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n'+
+				'				if (typeof callback === \'function\') {callback(null, tRes);}\n'+
+				'			} else {\n'+
+				'				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n'+
+				'				if (typeof callback === \'function\') {callback(tAnswer);}\n'+
+				'			}\n'+
+				'		} catch(error) {\n'+
+				'			console.error(\'Unknow\', error);\n'+
+				'			if (typeof callback === \'function\') {callback(error);}\n'+
+				'		}\n'+
+				'	});\n'+
+				'}};\n'+
+				'\n'+
+				NameSpace+' = {\n'+
+				fnlist+
+				'};\n';
 			/* ==================================================================== */
 			return ret;
 		}

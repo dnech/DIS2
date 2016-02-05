@@ -5,7 +5,8 @@ module.exports = (function(){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
 		
-		var util = require('util');
+		var util   = require('util');
+		var VError = require('verror');
 		
 		// ********** PRIVATE **********
 		
@@ -145,6 +146,15 @@ module.exports = (function(){
 			console.timeEnd('Time');
 			
 			console.config({prefix:""});
+			console.info('TEST ERROR');
+
+			try {
+				requery('util');
+			} catch(error) {
+				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'init', error.name);
+				console.error(error.message);
+			} 
+			
 		};
 		
 		// ********** END **********

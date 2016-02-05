@@ -13,31 +13,30 @@ module.exports = (function(){
 		
 		// ********** PRIVATE **********
 		
+		// Создание пространства переменных из строки для передачи в скрипт
 		function compileSandbox(src, name, callback){
 			try {
 				console.trace('compileSandbox:1', typeof src, src);
 				//var script  = new vm.Script("(function(){return function(){ return "+src+" ; };})();", { filename: 'Libs/'+name+'_sanbox' });
-				//var data     = script.runInThisContext();
-				
+				//var data    = script.runInThisContext();		
 				data = eval('new Object('+src+')');
-				
-				//console.trace('compileSandbox:2', typeof data, data);
-				callback(null, data);
+				return callback(null, data);
 			} catch(error) {
 				console.trace('compileSandbox:3', typeof error, error);
-				callback(error);
+				return callback(error);
 			}
 		};
 		
+		// Выполнение скрипта с возвратом результата через return
 		function runScript(src, sandbox, name, callback){
 			name = name || 'unknow';
 			try {
 				var script  = new vm.Script("(function(){return function(){ "+src+" };})();", { filename: 'Libs/'+name });
 				var data    = script.runInContext(new vm.createContext(sandbox));
-				callback(null, data());
+				return callback(null, data());
 			} catch(error) {
 				console.error('runScript', require('util').inspect(error.stack));
-				callback({error: error, module:conf.name, path:'runScript'});
+				return callback({error: error, module:conf.name, path:'runScript'});
 			}
 		};
 		
@@ -68,19 +67,20 @@ module.exports = (function(){
 					return callback('Error: access denied!');
 				}
 				
-				// Content
-				if (!data.script) {
-					console.trace('me.Content:5');
-					return callback(null, data.src);
-				} else {
-					// Форматирование пространство для выполнения скрипта
-					console.trace('me.Content:6');
-					compileSandbox(data.sandbox, name, function(err, compile_sandbox) {
-						if (err) {return callback(err, compile_sandbox);}	
-						sandbox = App.utils.extend(true, compile_sandbox, sandbox);
-						console.trace('me.Content:7');
+				// Форматирование пространства
+				compileSandbox(data.sandbox, name, function(err, compile_sandbox) {
+					if (err) {return callback(err, compile_sandbox);}	
+					sandbox = App.utils.extend(true, compile_sandbox, sandbox);
+					if (!data.script) {
+						console.trace('me.Content:5');
+						var mod_src = data.src;
+						for (var key in sandbox){
+							if (typeof sandbox[key] == 'string') {mod_src.replace(new RegExp('{'+key+'}', 'g'), sandbox[key]);}
+						}
+						return callback(null, mod_src);
+					} else {
+						console.trace('me.Content:6');
 						sandbox.config = App.utils.extend(true, {}, sandbox.config, config); // config from client side
-						console.trace('me.Content:8');
 						runScript(data.src, sandbox, name, function(err, data){
 							if (typeof data === 'function') {
 								data(callback);
@@ -88,8 +88,9 @@ module.exports = (function(){
 								callback(err, data);
 							}
 						});
-					});	
-				}	
+					}
+				});
+				
 			});
 		};	
 			

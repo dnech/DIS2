@@ -5,9 +5,10 @@ module.exports = (function(){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
 		
-		var async = require('async'); 
-		var path  = require('path');
-		var fs    = require('fs');
+		var async  = require('async'); 
+		var path   = require('path');
+		var fs     = require('fs');
+		var VError = require('verror');
 		
 		// Logger.console
 		var console = App.Logger.console(conf.name, me.config.logger);
@@ -101,9 +102,9 @@ module.exports = (function(){
 				data[1].forEach(function(item) {item.type = 'scheme';});
 				
 				if (box.priority_scheme){
-					if (typeof callback == 'function') callback(err, concat(data[1], data[0]));
+					if (typeof callback == 'function') callback(null, concat(data[1], data[0]));
 				} else {
-					if (typeof callback == 'function') callback(err, concat(data[0], data[1]));
+					if (typeof callback == 'function') callback(null, concat(data[0], data[1]));
 				}
 			});
 			
@@ -129,11 +130,12 @@ module.exports = (function(){
 					try {
 						ret = JSON.parse(ret);
 					} catch(error) {
+						error = new VError(error, 'Module.%s.%s > %s', conf.name, 'Get JSON.parse', error.name);
 						if (typeof callback == 'function') callback(error);
 						return;
 					}
 				}
-				if (typeof callback == 'function') callback(err, ret);
+				if (typeof callback == 'function') callback(null, ret);
 			});
 		};
 		
@@ -144,6 +146,7 @@ module.exports = (function(){
 				try {
 					value = JSON.stringify(value);
 				} catch(error) {
+					error = new VError(error, 'Module.%s.%s > %s', conf.name, 'Set JSON.stringify', error.name);
 					if (typeof callback == 'function') callback(error);
 					return;
 				}
