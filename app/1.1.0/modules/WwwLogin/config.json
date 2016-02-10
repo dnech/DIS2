@@ -1,4 +1,11 @@
 {
 	"info":"Config module WWW login",
-	"dir":"../../resources/www_login"
+	"logger":{
+		"enable":true,
+		"data":false,
+		"time":false,
+		"milliseconds":false,
+		"level":0,
+		"prefix":"        "
+	}
 }

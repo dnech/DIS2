@@ -1,4 +1,12 @@
 {
 	"info":    "Config module Sessions",
-	"timeout": 10000
+	"timeout": 10000,
+	"logger":{
+		"enable":true,
+		"data":false,
+		"time":false,
+		"milliseconds":false,
+		"level":0,
+		"prefix":"        "
+	}
 }

@@ -1,5 +1,5 @@
 Loader = {
-	ssid:'1234567890',
+	ssid:'undefined',
 	path:'test_login',
 	count:0,
 	type: {

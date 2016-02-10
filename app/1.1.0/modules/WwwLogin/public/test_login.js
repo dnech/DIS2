@@ -32,6 +32,6 @@ Loader.loaded(function () {
 			console.log('SSID wait');
 		  }
 		});
-	}, 5000); //500 seconds
+	}, 600000); //10 minute
 	
 });	

@@ -6,6 +6,7 @@ module.exports = (function(){
 		// ********** BEGIN **********
 
 		var vm = require('vm');
+		var VError = require('verror');
 		
 		// Logger.console
 		var console = App.Logger.console(conf.name, me.config.logger);
@@ -22,6 +23,7 @@ module.exports = (function(){
 				data = eval('new Object('+src+')');
 				return callback(null, data);
 			} catch(error) {
+				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'compileSandbox("'+name+'")', error.name);
 				console.trace('compileSandbox:3', typeof error, error);
 				return callback(error);
 			}
@@ -35,6 +37,7 @@ module.exports = (function(){
 				var data    = script.runInContext(new vm.createContext(sandbox));
 				return callback(null, data());
 			} catch(error) {
+				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'runScript("'+name+'")', error.name);
 				console.error('runScript', require('util').inspect(error.stack));
 				return callback({error: error, module:conf.name, path:'runScript'});
 			}
@@ -72,14 +75,18 @@ module.exports = (function(){
 					if (err) {return callback(err, compile_sandbox);}	
 					sandbox = App.utils.extend(true, compile_sandbox, sandbox);
 					if (!data.script) {
-						console.trace('me.Content:5');
+						console.trace('me.Content:5', sandbox, data.src);
 						var mod_src = data.src;
 						for (var key in sandbox){
-							if (typeof sandbox[key] == 'string') {mod_src.replace(new RegExp('{'+key+'}', 'g'), sandbox[key]);}
+							console.trace('me.Content:5+', key, typeof sandbox[key],  sandbox[key]);
+							if (typeof sandbox[key] == 'string') {
+								mod_src = mod_src.replace(new RegExp('{'+key+'}', 'g'), sandbox[key]);
+							}
 						}
+						console.trace('me.Content:6', mod_src);
 						return callback(null, mod_src);
 					} else {
-						console.trace('me.Content:6');
+						console.trace('me.Content:7');
 						sandbox.config = App.utils.extend(true, {}, sandbox.config, config); // config from client side
 						runScript(data.src, sandbox, name, function(err, data){
 							if (typeof data === 'function') {

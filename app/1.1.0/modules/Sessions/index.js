@@ -3,9 +3,16 @@ module.exports = (function(){
 	var Required = [];	
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
+		// ********** BEGIN **********
 		
+		// Logger.console
+		var console = App.Logger.console(conf.name, me.config.logger);
+		console.info('Load...');
+		
+		// ********** PRIVATE **********
 		var sessions = {};
 		
+		// ********** PUBLIC **********
 		me.clearAll = function () {
 			sessions = {};
 		};
@@ -114,10 +121,13 @@ module.exports = (function(){
 			}
 		};
 			
+		// ********** INIT **********
 		me.init = function(){
+			console.info('Init');
 			setInterval(me.clearOld, me.config.timeout);
 		};
 		
+		// ********** END **********
 		return me;
 	}
 	return {Required:Required, Module:Module};
