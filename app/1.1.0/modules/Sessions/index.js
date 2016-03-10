@@ -13,10 +13,19 @@ module.exports = (function(){
 		var sessions = {};
 		
 		// ********** PUBLIC **********
+		/* 
+			Функция публичная:
+			Зачищает все существующие сесии
+		*/
 		me.clearAll = function () {
 			sessions = {};
 		};
 		
+		/* 
+			Функция публичная:
+			Зачищает все старые сессии
+			Глубина от текущего времени - параметр "timeout" в конфиг файле
+		*/
 		me.clearOld = function () {
 			var now = new Date();
 			var olddate = now - me.config.timeout;
@@ -27,6 +36,10 @@ module.exports = (function(){
 			}
 		};
 		
+		/* 
+			Публичная Функция:
+			Функция зачищает все существующие сесии
+		*/
 		me.list = function () {
 			return sessions;
 		};
@@ -38,10 +51,10 @@ module.exports = (function(){
 			return ssid;
 		};
 		
-		me.exist = function (ssid) {
-			return (typeof sessions[ssid] !== 'undefined' && sessions[ssid].active) ? true : false;
+        me.read = function (ssid) {
+			return sessions[ssid];
 		};
-		
+        
 		me.update = function (ssid) {
 			if (me.exist(ssid)){
 				console.log('Sessions update', ssid, sessions);
@@ -50,6 +63,12 @@ module.exports = (function(){
 			}
 		};
 		
+        me.delete = function (ssid) {
+			//if (me.exist(ssid)){
+				delete(sessions[ssid]);
+			//}
+		};
+        
 		me.disable = function (ssid, status) {
 			if (me.exist(ssid)){
 				sessions[ssid].active = false;
@@ -59,11 +78,10 @@ module.exports = (function(){
 			}
 		};
 		
-		me.delete = function (ssid) {
-			if (me.exist(ssid)){
-				delete(sessions[ssid]);
-			}
+        me.exist = function (ssid) {
+			return (typeof sessions[ssid] !== 'undefined' && sessions[ssid].active) ? true : false;
 		};
+        
 		
 		me.getData = function (ssid, name) {
 			if (me.exist(ssid)){
@@ -94,7 +112,7 @@ module.exports = (function(){
 		// Helper for other module
 		// Public Function Gate
 		me.routerInit = function(req, res, url_login, url_work) {
-			var ssid = req.cookies['D-SSID'];
+			var ssid = req.cookies[me.config.cookie];
 			if (me.exist(ssid)) {
 				me.update(ssid);
 				if (me.getData(ssid, 'isRegistred')) {
@@ -104,13 +122,13 @@ module.exports = (function(){
 				}
 			} else {
 				var ssid = me.create();
-				res.cookie('D-SSID', ssid);
+				res.cookie(me.config.cookie, ssid);
 				res.redirect(url_login);
 			}
 		};
 		
 		me.routerCheck = function(req, res, next, url_init) {
-			var ssid = req.cookies['D-SSID'];
+			var ssid = req.cookies[me.config.cookie];
 			if (!me.exist(ssid)) {
 				res.redirect(url_init);
 			} else {

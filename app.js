@@ -1,4 +1,18 @@
+/**
+* @name DIS2
+* @namespace
+* @desc This is the principal namespace of my Application, all the core 
+* modules, and methods are here
+*/
+
 // Application
+/**
+* @desc RunApplication
+* 
+* @fires SystemReady
+* @fires MyCoreApp.SystemReady
+* @fires document.SystemReady
+*/
 function RunApplication(schema){
 	//// Compressor
 	//var pack = require('./app/common/packer').pack;
