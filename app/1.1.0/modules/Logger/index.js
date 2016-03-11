@@ -1,4 +1,8 @@
-/*  MODULE LOGGER */	
+/** 
+ * MODULE LOGGER 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/	
 module.exports = (function(){
 	var Required = [];
 	var Module   = function(conf){
@@ -6,7 +10,6 @@ module.exports = (function(){
 		// ********** BEGIN **********
 		
 		var util   = require('util');
-		var VError = require('verror');
 		
 		// ********** PRIVATE **********
 		
@@ -109,7 +112,7 @@ module.exports = (function(){
 		// ********** PUBLIC **********
 		
 		// MAIN OBJECT
-		me.console = function(module, cfg){
+		me.Console = function(module, cfg){
 			ModuleList[module] = me.config.default;
 			if (typeof cfg == 'object') {config(module, cfg);}
 			var obj = {
@@ -130,7 +133,7 @@ module.exports = (function(){
 		// ********** INIT **********
 		me.init = function(){
 			// test
-			var console = me.console('Logger', {date: false, time:false, prefix:'     '});
+			var console = me.Console('Logger', {date: false, time:false, prefix:'     '});
 			console.config({modulename:true, level: 0});
 			
 			console.info('Init');
@@ -146,14 +149,7 @@ module.exports = (function(){
 			console.timeEnd('Time');
 			
 			console.config({prefix:""});
-			console.info('TEST ERROR');
-
-			try {
-				requery('util');
-			} catch(error) {
-				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'init', error.name);
-				console.error(error.message);
-			} 
+			console.info('TEST ERROR'); 
 			
 		};
 		

@@ -1,6 +1,10 @@
-/*  MODULE Sessions */
+/** 
+ * MODULE SESSIONS 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/
 module.exports = (function(){
-	var Required = [];	
+	var Required = ['Logger'];	
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********

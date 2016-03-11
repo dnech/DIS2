@@ -1,4 +1,8 @@
-/*  MODULE CONFIGS */	
+/** 
+ * MODULE CONFIGS 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/	
 module.exports = (function(){
 	var Required = ['Logger'];
 	var Module   = function(conf){
@@ -201,14 +205,18 @@ module.exports = (function(){
 		me.Box = function(module, cfg){
 			if (typeof(module) !== 'string' || typeof(App.modules[module]) === 'undefined') {return;}
 		
-			var config = App.utils.extend(true, {
+			/*
+            var config = App.utils.extend(true, {
 				path: '',
 				ext: '.json',
 				json: true,
 				root: false,
 				priority_scheme: false
 			}, cfg);
-			
+			*/
+            
+            var config = App.utils.extend(true, me.config.default, cfg);
+            
 			var module_config  = App.modules[module].Config;
 			config.module_root = module_config.path;
 			config.module_data = path.resolve(config.module_root, config.path);
