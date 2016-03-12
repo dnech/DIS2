@@ -1,5 +1,5 @@
 {
-	"info": "Config module Acl",
+	"info": "Config module Access",
 	"default": "@",
 	"logger":{
 		"enable":true,

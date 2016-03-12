@@ -1,4 +1,8 @@
-/*  MODULE ACL */
+/** 
+ * MODULE ACCESS 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/
 module.exports = (function(){	
 	var Required = ['Logger', 'Users'];
 	var Module = function(conf){
@@ -6,7 +10,7 @@ module.exports = (function(){
 		// ********** BEGIN **********
 		
 		// Logger.console
-		var console = App.Logger.console(conf.name, me.config.logger);
+		var console = App.Logger.Console(conf.name, me.config.logger);
 		console.info('Load...');
 		
 		// Users:

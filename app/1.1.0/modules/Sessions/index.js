@@ -10,7 +10,7 @@ module.exports = (function(){
 		// ********** BEGIN **********
 		
 		// Logger.console
-		var console = App.Logger.console(conf.name, me.config.logger);
+		var console = App.Logger.Console(conf.name, me.config.logger);
 		console.info('Load...');
 		
 		// ********** PRIVATE **********

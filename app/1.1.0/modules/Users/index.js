@@ -1,5 +1,8 @@
-/*  MODULE USERS */
-
+/** 
+ * MODULE USERS 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/
 module.exports = (function(){
 	return {
 		Required: ['Direct', 'Sessions'],	
@@ -187,7 +190,7 @@ module.exports = (function(){
 			*/
 			
 			/* Direct client */
-			App.Direct.On({
+			App.Direct.on({
 				Users:{
 					Login:   function(ssid, param, ok, err){ok(me.Login(ssid, param.name, param.pass));},
 					Logout:  function(ssid, param, ok, err){ok(me.Logout(ssid));},
@@ -197,7 +200,7 @@ module.exports = (function(){
 			
 			
 			/* Direct configurator */
-			App.Direct.On({
+			App.Direct.on({
 				Users:{
 					List:   function(ssid, param, ok, err){ok({success:false, errors: [Errors['session']]});},
 					Set:    function(ssid, param, ok, err){ok({success:false, errors: [Errors['session']]});},

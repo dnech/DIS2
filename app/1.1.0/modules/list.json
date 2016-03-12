@@ -5,7 +5,7 @@
 		"Configs",
 		"Sessions",
 		"Users",
-		"Acl",
+		"Access",
 		"Gate",
 		"Direct",
 		"Libs",

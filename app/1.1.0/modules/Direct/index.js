@@ -1,12 +1,16 @@
-/*  MODULE DIRECT */
+/** 
+ * MODULE DIRECT 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/
 module.exports = (function(){
-	var Required = ['Logger', 'Acl'];
+	var Required = ['Access', 'Logger'];
 	var Module   = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
 		
 		// Logger.console
-		var console = App.Logger.console(conf.name, me.config.logger);
+		var console = App.Logger.Console(conf.name, me.config.logger);
 		console.info('Load...');
 		
 		// ********** PRIVATE **********
@@ -59,7 +63,7 @@ module.exports = (function(){
 			if (typeof fnobj === 'object' && typeof fnobj.fn === 'function') {
 				
 				// Проверка прав доступа
-				if (!App.Acl.Check(ssid, fnobj.acl)) {
+				if (!App.Access.Check(ssid, fnobj.acl)) {
 					res.end(SendError('E005', err, query.name));
 					return;
 				}
@@ -132,12 +136,12 @@ module.exports = (function(){
 		// ************* PUBLIC *************
 		
 		// Просмотр списка зарегистрированных функций
-		me.List = function(param){
+		me.list = function(param){
 			return require('util').inspect(DirectFunctions, param);
 		};
 		
 		// Регистрация функций
-		me.On = function(){
+		me.on = function(){
 			var a = arguments;
 			/*
 				arguments.length:
@@ -148,25 +152,25 @@ module.exports = (function(){
 			*/
 			switch (a.length) {
 				case 1:
-					addFunctions(DirectFunctions, a[0], App.Acl.Default());
+					addFunctions(DirectFunctions, a[0], App.Access.Default());
 					return true;
 				case 2:
 					if (typeof a[0] === 'string') { 
-						DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Acl.Default());
+						DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.Default());
 						return true;
 					} else {
-						addFunctions(DirectFunctions, a[0], App.Acl.Declare(a[1]));
+						addFunctions(DirectFunctions, a[0], App.Access.Declare(a[1]));
 						return true;
 					}
 				case 3:
-					DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Acl.Declare(a[2]));
+					DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.Declare(a[2]));
 					return true;		
 			}
 			return false;
 		};
 		
 		// Удаление функции
-		me.Off = function(path) {
+		me.off = function(path) {
 			var parts = path.split('.'),
 			    parent = DirectFunctions;
 			try {
@@ -183,7 +187,7 @@ module.exports = (function(){
 		
 		
 		// Сформировать строковый эквивалент функции для взаимодействия с Direct Api на стороне клиента
-		me.GetFunctionJs = function(ns, path, name, info, not_object){
+		me.getFunctionJs = function(ns, path, name, info, not_object){
 			var _ns = (typeof ns !== 'undefined') ? ns : me.config.namespace;
 			var _path = (typeof ns !== 'undefined') ? path : me.config.namespace+'.'+path;
 			info = (typeof info == 'string') ? info : '';
@@ -196,15 +200,15 @@ module.exports = (function(){
 		};
 		
 		// Сформировать строковый эквивалент класса DirectApi и список функции для взаимодействия с Direct Api на стороне клиента
-		me.GetFunctionsJs = function(NameSpace, base_url, ssid) {
+		me.getFunctionsJs = function(NameSpace, base_url, ssid) {
 			ssid = ssid || '00000000-0000-0000-0000-000000000000';
 			var fnlist = '';
 			function parse(obj, path, tabs){
 				for (name in obj){
 					if (typeof obj[name] === 'object' && typeof obj[name].fn === 'function') {
 						// Проверка прав доступа
-						if (App.Acl.Check(ssid, obj[name].acl)) {
-							fnlist += tabs+me.GetFunctionJs(NameSpace, path, name, obj[name].info);
+						if (App.Access.Check(ssid, obj[name].acl)) {
+							fnlist += tabs+me.getFunctionJs(NameSpace, path, name, obj[name].info);
 						}
 					} else if (typeof obj[name] === 'object') {
 						fnlist += tabs+name+':{\n';
@@ -270,7 +274,7 @@ module.exports = (function(){
 			console.log('me.regRouteApi', cfg, config);
 			server.all(config.base_url+me.config.api_url, function(req, res) {
 				var ssid = (typeof config.ssid == 'function') ? config.ssid(req) : config.ssid || '';
-				var script = me.GetFunctionsJs(config.namespace, config.base_url, ssid);
+				var script = me.getFunctionsJs(config.namespace, config.base_url, ssid);
 				if (typeof config.hook_api === 'function'){script = config.hook_api(script);}
 				res.send(script);
 			});
@@ -302,7 +306,7 @@ module.exports = (function(){
 		};
 		
 		// Тестовая регистрация функции
-		me.On({
+		me.on({
 			_Ping: 'Info: Test function Ping. Param: (any). Return: type and value input param',
 			Ping: function(auth, param, callback) {
 				callback(null, 'Pong "'+param+'" ('+(typeof param)+')');	

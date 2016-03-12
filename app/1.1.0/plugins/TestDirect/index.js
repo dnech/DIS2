@@ -8,7 +8,7 @@ module.exports = (function(){
 
 		// REGISTRED FUNCTION IN DIRECT
 		
-		App.Direct.On({
+		App.Direct.on({
 			TestDirect:{
 				Test1: function(ssid, param, ok, err){
 					//log.error('*******************************','*');

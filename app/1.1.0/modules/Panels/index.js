@@ -41,7 +41,7 @@ module.exports = (function(){
 	}
 	
 	return {
-		Required: ['Acl','Direct'],	
+		Required: ['Access','Direct'],	
 		Module: function(conf){
 			var me = App.namespace(conf.name, conf);
 			me.List = {};
@@ -205,14 +205,14 @@ module.exports = (function(){
 			};
 			
 			/* Direct client */
-			App.Direct.On({
+			App.Direct.on({
 				Panels:{
 					Content: me.Content
 				}
 			}, '*');
 			
 			/* Direct configurator */
-			App.Direct.On({
+			App.Direct.on({
 				Panels:{
 					List: me.List,
 					Set:  me.Set,

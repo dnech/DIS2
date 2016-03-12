@@ -215,7 +215,7 @@ module.exports = (function(){
 	};
 	
 	return {
-		Required: ['Acl', 'Gate'],	
+		Required: ['Access', 'Gate'],	
 		Module: Module
 	}
 })();

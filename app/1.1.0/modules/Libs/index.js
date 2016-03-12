@@ -1,6 +1,10 @@
-/*  MODULE LIB */
+/** 
+ * MODULE LIB 
+ * @author dnech@mail.ru
+ * @version 0.0.1
+*/
 module.exports = (function(){
-	var Required = ['Logger', 'Configs', 'Acl', 'Direct'];
+	var Required = ['Logger', 'Configs', 'Access', 'Direct'];
 	var Module   = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
@@ -9,7 +13,7 @@ module.exports = (function(){
 		var VError = require('verror');
 		
 		// Logger.console
-		var console = App.Logger.console(conf.name, me.config.logger);
+		var console = App.Logger.Console(conf.name, me.config.logger);
 		console.info('Load...');
 		
 		// ********** PRIVATE **********
@@ -51,7 +55,7 @@ module.exports = (function(){
 		
 		me.Content = function(ssid, name, config, sandbox, callback) {
 			console.trace('me.Content:1', name, config);
-			me.Box.Get(name, function(err, data) {
+			me.Box.get(name, function(err, data) {
 				console.trace('me.Content:2', err, data);
 				if (err) {return callback(err, data);}			
 				
@@ -65,7 +69,7 @@ module.exports = (function(){
 				console.trace('me.Content:3', data);
 				
 				// Acl
-				if (!App.Acl.Check(ssid, data.acl)) {
+				if (!App.Access.Check(ssid, data.acl)) {
 					console.trace('me.Content:4', 'Error: access denied!');
 					return callback('Error: access denied!');
 				}
@@ -149,13 +153,13 @@ module.exports = (function(){
 		*/
 		
 		// Direct for admin
-		App.Direct.On({
+		App.Direct.on({
 			Libs: me.Box.Direct
 		}, '#');
 		
 	
 		// Direct for all 
-		App.Direct.On({
+		App.Direct.on({
 			Libs:{
 				_Content: 'Info: Get Libs Content. Param: {name, config}. Return: Script run result.',
 				Content: function(ssid, param, callback) {me.Content(ssid, param.name, param.config, {}, callback);}

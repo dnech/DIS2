@@ -37,7 +37,7 @@ module.exports = (function(){
 	}
 	
 	return {
-		Required: ['Acl','Direct'],	
+		Required: ['Access','Direct'],	
 		Module: function(conf){
 			var me = App.namespace(conf.name, conf);
 			me.List = {};
@@ -145,7 +145,7 @@ module.exports = (function(){
 				});
 			};
 			
-			App.Direct.On({
+			App.Direct.on({
 				Forms:{
 					getContent: me.getContent
 				}

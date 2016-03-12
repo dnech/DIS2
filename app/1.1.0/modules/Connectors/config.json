@@ -1,0 +1,21 @@
+{
+	"info":"Config module Gate",
+	"port": 8080,
+	"compress": true,
+	"cors": true,
+	"AccessControl": {
+		"AllowOrigin": "*",
+		"AllowMethods": "GET,PUT,POST,DELETE,OPTIONS",
+		"AllowHeaders": "Origin, X-Requested-With, Content-Type, Accept",
+		"AllowCredentials": true,
+		"MaxAge": 3600
+	},
+    "logger":{
+		"enable":true,
+		"data":false,
+		"time":false,
+		"milliseconds":false,
+		"level":0,
+		"prefix":"        "
+	}
+}
