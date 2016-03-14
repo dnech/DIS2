@@ -26,13 +26,13 @@ function modulesLoad(type, mods, folder, required) {
 				modulesLoad(type, Modules[module].Required, folder, true);
 				Modules[module].Config  = {name: module, path: mod_folder, type: type, config: config};
 				Modules[module].Compile = Modules[module].Module(Modules[module].Config);
+                App.Events.emit('load', module);
 			} else {
 				if (!required){log.title('  Load "'+module+'", already loaded.');} else {log.title('    Load required "'+module+'", already loaded.');}
 			}
 		}
 	} catch (err) {
 		log.error('Load modules', err);
-		return undefined;
 	}
 }
 
@@ -45,11 +45,13 @@ function modulesInit() {
 			if (typeof module.init === 'function') {
 				log.title('  Initialization "'+module.name+'"');
 				module.init();
+                App.Events.emit('init', module.name);
 			}
 		}
+        log.info(log.color('1;35', 'Core initialized'));
+        App.Events.emit('initialized');
 	} catch (err) {
 		log.error('Initialization module', err);
-		return undefined;
 	}
 }
 
@@ -84,5 +86,7 @@ module.exports = function(){
 		log.error('Core init plugin', err);
 		return;
 	}
+    App.Events.emit('loaded');
 	modulesInit();
+    App.Events.emit('launched');
 }

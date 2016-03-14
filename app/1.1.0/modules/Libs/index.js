@@ -3,6 +3,7 @@
  * @author dnech@mail.ru
  * @version 0.0.1
 */
+'use strict';
 module.exports = (function(){
 	var Required = ['Logger', 'Configs', 'Access', 'Direct'];
 	var Module   = function(conf){
@@ -53,6 +54,7 @@ module.exports = (function(){
 			ext: '.lib'
 		});
 		
+        
 		me.Content = function(ssid, name, config, sandbox, callback) {
 			console.trace('me.Content:1', name, config);
 			me.Box.get(name, function(err, data) {
@@ -166,6 +168,27 @@ module.exports = (function(){
 			}
 		}, '*');
 		
+        // Register Acceess Resource
+        App.Access.Resources.register(conf.name, {
+            module:conf.name,
+            name:conf.name+'.*',
+            title:conf.name+'.*',
+            description:'Module: '+conf.name+'. Data: All.'
+        });
+        
+        // Register Acceess Resource
+        App.Access.Resources.register(conf.name, (cb) => {
+			me.Box.list((err, list) => {
+                if (err){return cb(null, []);}
+                var module = conf.name;
+                var files = [];
+                for (var key in list) {
+                    files.push({module:module, name:module+'.'+key, title:module+'.'+key, description:'Module: '+module+'. Data: '+key+'.'});
+                }
+                cb(null, files);  
+            });
+		});
+        
 		// ********** INIT **********
 		me.init = function(){
 			console.info('Init');

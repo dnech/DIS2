@@ -1,10 +1,14 @@
+'use strict';
 var path   = require('path');
+var events = require('events');
 
 global.unpack = require('./common/packer').unpack();
 global.log    = require('./common/logger');
 
 global.App = {};
 App.path = {};
+
+App.Events  = new events.EventEmitter();
 
 /*   Namespace  */
 App.namespace = function (ns_string, def_object) { 

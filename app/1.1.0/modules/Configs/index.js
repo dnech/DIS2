@@ -32,7 +32,7 @@ module.exports = (function(){
     
     // Список файлов
     function List(box, callback){
-      
+    
       function concat(arr1, arr2){
         var files = {};
         arr1.forEach(function(item) {
@@ -214,9 +214,9 @@ module.exports = (function(){
         priority_scheme: false
       }, cfg);
       */
-            
-      var _config = App.utils.extend(true, me.config.default, cfg);
-            
+     
+      var _config = App.utils.extend(true, {}, me.config.default, cfg);
+ 
       var module_config  = App.modules[module].Config;
       _config.module_root = module_config.path;
       _config.module_data = path.resolve(_config.module_root, _config.path);

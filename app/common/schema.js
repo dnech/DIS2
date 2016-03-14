@@ -8,8 +8,6 @@ function exists(file){
 
 module.exports = function(schema){
 	try {
-
-		
 		// Schema unpack
 		if (exists(schema+'.schema')) {
 			log.info(log.color('1;35', 'PreLoad packed scheme "'+schema+'.schema"'));
