@@ -1,7 +1,7 @@
 {
 	"info": "Config module Users",
   "logger": {
-		"enable": false,
+		"enable": true,
 		"prefix": "    "
 	}
 }

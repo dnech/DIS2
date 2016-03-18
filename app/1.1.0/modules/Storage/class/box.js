@@ -60,6 +60,7 @@ function Box(moduleName, config) {
     
   /**/  
   me.list = function(callback) {
+    
     function concat(type1, arr1, type2, arr2){
       var arr = {};
       arr1.sort();
@@ -74,17 +75,29 @@ function Box(moduleName, config) {
       });
       return arr;
     };
-      
-    async.parallel({
-        module: function(cb){_config.module_storage.list(cb)},
-        scheme: function(cb){_config.scheme_storage.list(cb)}
-    }, function(err, data){
+    
+    if (typeof callback === 'undefined') {
+      /* Sync */
+      var module = _config.module_storage.list();
+      var scheme = _config.scheme_storage.list();
       if (_config.priority_scheme){
-        if (typeof callback === 'function') callback(null, concat('scheme', data.scheme, 'system', data.module));
+        return concat('scheme', data.scheme, 'system', data.module);
       } else {
-        if (typeof callback === 'function') callback(null, concat('system', data.module, 'scheme', data.scheme));
+        return concat('system', data.module, 'scheme', data.scheme);
       }
-    });
+    } else {
+      /* Async */
+      async.parallel({
+          module: function(cb){_config.module_storage.list(cb)},
+          scheme: function(cb){_config.scheme_storage.list(cb)}
+      }, function(err, data){
+        if (_config.priority_scheme){
+          if (typeof callback === 'function') callback(null, concat('scheme', data.scheme, 'system', data.module));
+        } else {
+          if (typeof callback === 'function') callback(null, concat('system', data.module, 'scheme', data.scheme));
+        }
+      });
+    }
   };
   
   /**/

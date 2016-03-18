@@ -35,7 +35,7 @@ module.exports = (function(){
      
   
     me.Box = function(module, config){
-      var B = require('./box');
+      var B = require('./class/box');
       var _config = _.defaultsDeep(config || {}, {
         module_root: App.modules[module].Config.path,
         scheme_root: path.resolve(App.path.schema, module)

@@ -28,7 +28,7 @@ module.exports = (function(){
      */
 
 		me.Console = function(module, config){
-			var c = require('./console');
+			var c = require('./class/console');
       var _config = _.defaultsDeep({}, config || {}, me.config.default);
       return new c(module, _config);
 		};
