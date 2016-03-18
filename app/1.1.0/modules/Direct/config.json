@@ -1,15 +1,11 @@
 {
-	"info":"Config module Direct",
-	"namespace":"Direct",
+	"info": "Config module Direct",
+	"namespace": "Direct",
 	"api_url": "direct/api",
 	"direct_url": "direct/rpc",
 	"trace": false,
-	"logger":{
-		"enable":true,
-		"data":false,
-		"time":false,
-		"milliseconds":false,
-		"level":0,
-		"prefix":"        "
+	"logger": {
+		"enable": false,
+		"prefix": "    "
 	}
 }

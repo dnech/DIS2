@@ -2,11 +2,7 @@
 	"info": "Config module Access",
 	"default": "@",
 	"logger":{
-		"enable":true,
-		"data":false,
-		"time":false,
-		"milliseconds":false,
-		"level":0,
-		"prefix":"        "
+		"enable":false,
+		"prefix":"    "
 	}
 }

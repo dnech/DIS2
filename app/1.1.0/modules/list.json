@@ -2,18 +2,26 @@
 	"info": "Modules",
 	"list": [
 		"Logger",
-		"Configs",
-		"Sessions",
-		"Users",
+    "Storage",
+    "Sessions",
+    "Users",
+    "Access",
+    "Direct",
+    
 		"Access",
-		"Gate",
-		"Direct",
-		"Libs",
-		"Files",
+    "Storage",
+		"Access",
+    
+    
+		"Gate"		
+	],
+  "unused": [
+  	"Libs",
 		"Panels",
-		"Forms",
+    "Files",
+    "Forms",
 		"WwwClient",
 		"WwwConfigurator",
 		"WwwLogin"
-	]
+  ]
 }

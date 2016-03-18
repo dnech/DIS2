@@ -1,3 +1,7 @@
 {
-	"info":"Config module Inspect"
+	"info": "Config module Inspect",
+  "logger":{
+		"enable": false,
+		"prefix": "    "
+	}
 }

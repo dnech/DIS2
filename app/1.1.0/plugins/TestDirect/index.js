@@ -1,8 +1,13 @@
 /*  MODULE TEST DIRECT */
 module.exports = (function(){
-	var Module = function(conf){
+	var Required = ['Direct'];
+  var Module = function(conf){
 		var me = conf;
 		
+    // Logger.console
+		var console = App.Logger.Console(conf.name, me.config.logger);
+		console.info('Load...');
+    
 		/* ----------------------------------------------------------------------------- */
 		var Counter = 0;
 
@@ -29,14 +34,14 @@ module.exports = (function(){
 			}
 		});
 		
-		log.param('    TEST DIRECT load:', '');
+		console.param('TEST DIRECT load:', '');
 		/* ----------------------------------------------------------------------------- */
 		
 		me.init = function(){
-			log.param('    TEST DIRECT init:', '');
+			console.param('TEST DIRECT init:', '');
 		};
 		
 		return me;
 	}
-	return {Required:['Direct'], Module:Module};
+	return {Required:Required, Module:Module};
 })();

@@ -1,0 +1,7 @@
+{
+	"info": "Config module TestDirect",
+  "logger":{
+		"enable": false,
+		"prefix": "    "
+	}
+}

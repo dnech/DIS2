@@ -1,6 +1,6 @@
 {
-	"info":"Config module Gate",
-	"port": 8080,
+	"info": "Config module Gate",
+	"port": 8000,
 	"compress": true,
 	"cors": true,
 	"AccessControl": {
@@ -10,12 +10,8 @@
 		"AllowCredentials": true,
 		"MaxAge": 3600
 	},
-    "logger":{
-		"enable":true,
-		"data":false,
-		"time":false,
-		"milliseconds":false,
-		"level":0,
-		"prefix":"        "
+  "logger":{
+		"enable": false,
+		"prefix": "    "
 	}
 }

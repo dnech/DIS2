@@ -5,6 +5,23 @@ function exists(file){
     try {return fs.statSync(file).isFile();} catch (err) {return false;}
 }
 
+function errorParse(err) {
+  var stack = '';
+  if (err.stack) {
+    stack = (err.stack.split('\n'))[1];
+    stack = (/\(([^()]*)\)/.exec(stack))[1];
+  }
+  var name = err;
+  if (err.name) {
+    name = err.name;
+  }
+  var message = '';
+  if (err.message) {
+    message = err.message;
+  }
+  return name+': '+message+' {'+stack+'}';  
+}
+
 // Modules load
 function modulesLoad(type, mods, folder, required) {
 	try {
@@ -21,18 +38,25 @@ function modulesLoad(type, mods, folder, required) {
 				var config = App.utils.loadConfig(mod_folder);
 				var config_schema = App.utils.loadConfig(path.resolve(App.path.schema, './'+module));
 				App.utils.extend(true, config, config_schema);
-				
-				Modules[module] = require(mod_folder);
-				modulesLoad(type, Modules[module].Required, folder, true);
+				try {
+				  Modules[module] = require(mod_folder);
+				} catch (err) {
+          log.error('Module require "'+module+'"', errorParse(err));
+        }
+        modulesLoad(type, Modules[module].Required, folder, true);
 				Modules[module].Config  = {name: module, path: mod_folder, type: type, config: config};
-				Modules[module].Compile = Modules[module].Module(Modules[module].Config);
-                App.Events.emit('load', module);
+				try {
+          Modules[module].Compile = Modules[module].Module(Modules[module].Config);
+        } catch (err) {
+          log.error('Compile modules "'+module+'"', errorParse(err));
+        }
+        App.Events.emit('load', module);
 			} else {
 				if (!required){log.title('  Load "'+module+'", already loaded.');} else {log.title('    Load required "'+module+'", already loaded.');}
 			}
 		}
 	} catch (err) {
-		log.error('Load modules', err);
+		log.error('Load modules', errorParse(err));
 	}
 }
 
@@ -51,7 +75,7 @@ function modulesInit() {
         log.info(log.color('1;35', 'Core initialized'));
         App.Events.emit('initialized');
 	} catch (err) {
-		log.error('Initialization module', err);
+		log.error('Initialization module', errorParse(err));
 	}
 }
 

@@ -1,13 +1,9 @@
 {
-	"info":    "Config module Sessions",
+	"info": "Config module Sessions",
 	"timeout": 10000,
-    "cookie": "D-SSID",
-	"logger":{
-		"enable":true,
-		"data":false,
-		"time":false,
-		"milliseconds":false,
-		"level":0,
-		"prefix":"        "
+  "cookie": "D-SSID",
+	"logger": {
+		"enable": false,
+		"prefix": "    "
 	}
 }

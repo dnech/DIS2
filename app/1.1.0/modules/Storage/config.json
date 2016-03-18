@@ -1,0 +1,13 @@
+{
+	"info":"Config module Configs",
+	"default":{
+		"path": "data",
+    "ext": ".json",
+		"root": false,
+		"priority_scheme": false
+  },
+  "logger":{
+		"enable": false,
+		"prefix": "    "
+	}
+}

@@ -3,9 +3,9 @@
  * @author dnech@mail.ru
  * @version 0.0.1
 */
-'use strict';
+"use strict";
 module.exports = (function(){
-	var Required = ['Logger', 'Configs', 'Access', 'Direct'];
+	var Required = ['Logger', 'Storage', 'Access', 'Direct'];
 	var Module   = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
@@ -49,7 +49,7 @@ module.exports = (function(){
 		};
 		
 		// ********** PUBLIC **********
-		me.Box = App.Configs.Box(conf.name, {
+		me.Box = App.Storage.Box(conf.name, {
 			path: 'data',
 			ext: '.lib'
 		});
