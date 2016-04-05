@@ -1,24 +1,20 @@
 /** 
- * CLASS Users 
+ * CLASS Roles 
  * @author dnech@mail.ru
  * @version 0.0.1
 */	
 
 
-
-/* Class User */
-function User(config) {
+/* Class Role */
+function Role(config) {
   var me = this;
   
   var _ = require('lodash');
   
   var _property = [
-    {name: 'active',  default: true,     rights: 'RW' }, 
-    {name: 'login',   default: 'unknow', rights: 'R'  },
-    {name: 'pass',    default: 'unknow', rights: 'W'  },
-    {name: 'isAdmin', default: false,    rights: 'RW' },
-    {name: 'roles',   default: [],       rights: 'RW' },
-    {name: 'data',    default: {},       rights: 'RW', set: function(newValue, oldValue) { return _.defaultsDeep({}, newValue, oldValue);}}
+    {name: 'active', default: true,     rights: 'RW' }, 
+    {name: 'name',   default: 'unknow', rights: 'RW' },
+    {name: 'rules',  default: {},       rights: 'RW' }
   ]
   
   /**
@@ -61,7 +57,8 @@ function User(config) {
    *  ========================= P U B L I C =========================
    */
   
-  me.check = function(key, value) {
+ 
+  me.find = function(key, value) {
     return (_config[key] === value);
   };
   
@@ -73,35 +70,27 @@ function User(config) {
 
 
 
-
-
-
-/* Class Users */
-function Users(module, config) {
+/* Class Roles */
+function Roles(module, config) {
   var me = this;
   
   var _       = require('lodash');
-  //var User    = require('./user');
-  var console = App.Logger.Console(module+'.Users', config.logger);
+  var console = App.Logger.Console(module+'.Roles', config.logger);
   
   var _list = {};
   var _box  = App.Storage.Box(module, {
-      path: 'data',
+      path: 'roles',
       ext: '.json'
   });
    
   
   /**
-   *
    *  ========================= P R I V A T E =========================
-   *
    */
   
     
   /**
-   *
    *  ========================= P U B L I C =========================
-   *
    */
   me.clear = function() {
     _list = {};
@@ -112,7 +101,7 @@ function Users(module, config) {
     var list = _box.list();
     for (var key in list) {
       var data = _box.get(key);
-      me.set(key, new User(data));
+      me.set(key, new Role(data));
     };
     if (typeof cb === 'undefined') {
       return _list;
@@ -151,7 +140,7 @@ function Users(module, config) {
         
   me.add = function(value) {
     var key = require('node-uuid').v4();
-    me.set(key, new User(value));
+    me.set(key, new Role(value));
   };
         
   me.remove = function(key) {
@@ -160,19 +149,11 @@ function Users(module, config) {
         
   me.find = function(field, value) {
     for (var key in _list) {
-      if (_list[key].check(field, value)) {
+      if (_list[key].find(field, value)) {
         return _list[key];
       }
     }
     return;
-  };
-        
-  me.check = function(login, pass) {
-    var user = me.find('login', login);
-    if (user) {
-      return user.check('pass', pass);
-    }
-    return false;
   };
   
   me.Direct = function() {
@@ -181,4 +162,4 @@ function Users(module, config) {
   
 };
 
-module.exports = Users;
+module.exports = Roles;

@@ -55,10 +55,10 @@ module.exports = (function(){
 		});
 		
         
-		me.Content = function(ssid, name, config, sandbox, callback) {
-			console.trace('me.Content:1', name, config);
+		me.content = function(ssid, name, config, sandbox, callback) {
+			console.trace('me.content:1', name, config);
 			me.Box.get(name, function(err, data) {
-				console.trace('me.Content:2', err, data);
+				console.trace('me.content:2', err, data);
 				if (err) {return callback(err, data);}			
 				
 				// set file config on default
@@ -68,11 +68,11 @@ module.exports = (function(){
 					sandbox: {},
 					src: ''
 				}, data);
-				console.trace('me.Content:3', data);
+				console.trace('me.content:3', data);
 				
 				// Acl
 				if (!App.Access.Check(ssid, data.acl)) {
-					console.trace('me.Content:4', 'Error: access denied!');
+					console.trace('me.content:4', 'Error: access denied!');
 					return callback('Error: access denied!');
 				}
 				
@@ -81,18 +81,18 @@ module.exports = (function(){
 					if (err) {return callback(err, compile_sandbox);}	
 					sandbox = App.utils.extend(true, compile_sandbox, sandbox);
 					if (!data.script) {
-						console.trace('me.Content:5', sandbox, data.src);
+						console.trace('me.content:5', sandbox, data.src);
 						var mod_src = data.src;
 						for (var key in sandbox){
-							console.trace('me.Content:5+', key, typeof sandbox[key],  sandbox[key]);
+							console.trace('me.content:5+', key, typeof sandbox[key],  sandbox[key]);
 							if (typeof sandbox[key] == 'string') {
 								mod_src = mod_src.replace(new RegExp('{'+key+'}', 'g'), sandbox[key]);
 							}
 						}
-						console.trace('me.Content:6', mod_src);
+						console.trace('me.content:6', mod_src);
 						return callback(null, mod_src);
 					} else {
-						console.trace('me.Content:7');
+						console.trace('me.content:7');
 						sandbox.config = App.utils.extend(true, {}, sandbox.config, config); // config from client side
 						runScript(data.src, sandbox, name, function(err, data){
 							if (typeof data === 'function') {
@@ -154,39 +154,41 @@ module.exports = (function(){
 			});
 		*/
 		
-		// Direct for admin
-		App.Direct.on({
-			Libs: me.Box.Direct
-		}, '#');
-		
-	
 		// Direct for all 
 		App.Direct.on({
-			Libs:{
-				_Content: 'Info: Get Libs Content. Param: {name, config}. Return: Script run result.',
-				Content: function(ssid, param, callback) {me.Content(ssid, param.name, param.config, {}, callback);}
+		  Libs:{
+		    _content: 'Info: Get Libs Content. Param: {name, config}. Return: Script run result.',
+			  content: function(ssid, param, callback) {me.content(ssid, param.name, param.config, {}, callback);}
 			}
 		}, '*');
 		
-        // Register Acceess Resource
-        App.Access.Resources.register(conf.name, {
-            module:conf.name,
-            name:conf.name+'.*',
-            title:conf.name+'.*',
-            description:'Module: '+conf.name+'. Data: All.'
-        });
+    // Direct for admin
+		App.Direct.on({
+			Libs: {
+        Box: me.Box.Direct
+      }  
+		}, '#');
+    
+    
+      // Register Acceess Resource
+      App.Access.Resources.register(conf.name, {
+        module: conf.name,
+        name:   conf.name+'.*',
+        title:  conf.name+'.*',
+        description: 'Module: '+conf.name+'. Data: All.'
+      });
         
-        // Register Acceess Resource
-        App.Access.Resources.register(conf.name, (cb) => {
-			me.Box.list((err, list) => {
-                if (err){return cb(null, []);}
-                var module = conf.name;
-                var files = [];
-                for (var key in list) {
-                    files.push({module:module, name:module+'.'+key, title:module+'.'+key, description:'Module: '+module+'. Data: '+key+'.'});
-                }
-                cb(null, files);  
-            });
+      // Register Acceess Resource
+      App.Access.Resources.register(conf.name, (cb) => {
+        me.Box.list((err, list) => {
+          if (err){return cb(null, []);}
+            var module = conf.name;
+            var files = [];
+            for (var key in list) {
+              files.push({module:module, name:module+'.'+key, title:module+'.'+key, description:'Module: '+module+'. Data: '+key+'.'});
+            }
+            cb(null, files);  
+        });
 		});
         
 		// ********** INIT **********

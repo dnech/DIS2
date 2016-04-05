@@ -7,13 +7,8 @@
     "Users",
     "Access",
     "Direct",
-    
-		"Access",
-    "Storage",
-		"Access",
-    
-    
-		"Gate"		
+		"Gate",
+    "WwwLogin"		
 	],
   "unused": [
   	"Libs",

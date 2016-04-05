@@ -5,7 +5,7 @@
 */
 "use strict";
 module.exports = (function(){	
-	var Required = ['Logger', 'Storage', 'Users'];
+	var Required = ['Logger', 'Storage', 'Users', 'Sessions'];
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
@@ -14,222 +14,34 @@ module.exports = (function(){
 		var console = App.Logger.Console(conf.name, me.config.logger);
 		console.info('Load...');
 		
-        var async  = require('async'); 
-        var Events = require('events');
-        var VError = require('verror');
-        
-        me.Box = App.Storage.Box(conf.name, {
-            path: 'data',
-            ext: '.json',
-            priority_scheme: true
-        });
 
-		// Users:
-		//   Admin
-		//   Manager
-		//   User
-		// Roles:
-		//   Administrators
-		//   Managers
-		//   Users
-		// Resources
-		//   All
-		//   Module1.*
-		//   Module2.function1
-		//   Module2.function2		
-		// RESOURCES
-        
-        /**
-         * Класс работы с Ролью
-         */
-        me.Role = function(config) {
-            
-            var self = {};
-            
-            /**
-             * Constructor 
-             */
-            self.config = App.utils.extend(true, {
-                name: '',
-                description: '',
-                resources: []
-            }, config);
-            
-            /**
-             * Добавить ресурс и право на него
-             */
-            self.add = (name, action) => {
-                if (typeof action === 'undefined') {action = true;}
-                self.config.resources.push({name:name, action:action});
-            };
-            
-            /**
-             * Удалить ресурс
-             */
-            self.remove = (name) => {
-                self.config.resources = self.config.resources.filter((value) => {
-                    return (value.name != name);  
-                }); 
-            };
-            
-            /**
-             * Получить объект роли
-             */
-            self.data = () => {
-                return App.utils.extend(true, {}, self.config);
-            };
-            
-            return self;
-        };
-        
-        /**
-         * Класс работы с Ролями
-         */
-		me.Roles = (() => {
-            var self = {
-                list: []
-            };
-            
-            /** 
-             *  Roles.Events:
-             *  - load
-             *  - save
-             */
-            self.events = new Events.EventEmitter();
-            
-            /**
-             * Загрузить роли из файла
-             */
-            self.load = (cb) => {
-                me.Box.get('roles', (err, data) => {
-                    if (err) {
-                        err = new VError(err, 'Module.%s.%s > %s', conf.name, 'Roles.load', err.name);
-                        return cb(err, self.list);
-                    };
-                    if (!Array.isArray(data)) {
-                        var err = new VError(null, 'Module.%s.%s > %s', conf.name, 'Roles.load', 'Bad data');
-                        return cb(err, self.list);
-                    };
-                    self.list = [];
-                    data.forEach((item) => {
-                        self.list.push(new me.Role(item));    
-                    });
-                    self.events.emit('load', self.list);
-                    return cb(null);
-                }); 
-            };
-            
-            /**
-             * Сохранить роли в файл
-             */
-            self.save = (cb) => {
-                var raw = [];
-                self.list.forEach((item) => {
-                    raw.push(item.data());    
-                });
-                me.Box.set('roles', raw, (err) => {
-                    self.events.emit('save', err);
-                    cb(err);
-                });
-            };
-            
-            return self;
-        })();
-        
+    var async  = require('async'); 
+    var Events = require('events');
+    var VError = require('verror');
+    
+    var Errors = {
+      'session_not_found':       {module:conf.name, code:'501', message:'Session not found'},
+      'incorrect_user_password': {module:conf.name, code:'502', message:'The username or password is incorrect'},
+      'not_logged':              {module:conf.name, code:'503', message:'User is not logged'},
+      'not_found':               {module:conf.name, code:'504', message:'User not found'}
+    }
+    
+    var _allRights = {};
+    
+    
+    /**
+     * Класс работы с ролями
+     */
+    var Roles = require('./class/roles');
+    me.Roles = new Roles(conf.name, me.config);
+    me.Roles.load();
+    
+    
 		/**
-         * Класс работы с ресурсами
-         */
-		me.Resources = (function() {
-            var listRes = [];
-            var listFn  = [];
-           
-            var self = {};
-            
-            /** 
-             *  Resources.Events:
-             *  - register
-             *  - unregister
-             *  - update
-             */
-            self.events = new Events.EventEmitter();
-            
-            /**
-             * Список всех ресурсов
-             */
-            self.list = () => {
-                return listRes;
-            };
-            
-            /**
-             * Добавление функций формирования списка ресурсов
-             */            
-            self.register = (module, data) => {
-                var func;
-                
-                if (typeof data === 'object') {
-                    func = (cb) => {
-                        cb(null, [data]); 
-                    };
-                }
-                
-                if (Array.isArray(data)) {
-                    func = (cb) => {
-                        cb(null, data); 
-                    };
-                }
-                
-                if (typeof data === 'function') {
-                    func = data;
-                }
-                
-                if (func) {
-                    listFn.push({module:module, func: func});
-                    self.events.emit('register', module);
-                }
-                
-            };
-            
-            /**
-             * Удаление функций формирования списка ресурсов
-             */ 
-            self.unregister = (module) => {
-                listFn = listFn.filter((value) => {
-                    return (value.module != module);  
-                });
-                self.events.emit('unregister', module);
-            };
-            
-            /**
-             * Выполнение функций для формирования списка ресурсов
-             */
-            self.update = (cb) => {
-                listRes = [];
-                var arr = [];
-                listFn.forEach((item) => {
-                    if (typeof(item.func) === 'function') {
-                        arr.push((cb) => {item.func(cb);});
-                    }    
-                });
-                    
-                async.parallel(arr, (err, data) => {
-                    if (err) {
-                        console.error('Resource.update:', err);
-                        return cb(err, listRes);
-                    }
-                    data.forEach((res) => {
-                        res.forEach((item) => {
-                            if (!listRes.some((value)=>{return (value.name === item.name);})) {
-                                listRes.push(item);
-                            }
-                        });
-                    });
-                    self.events.emit('update');
-                    cb(null, listRes);                
-                });    
-            };
-            
-            return self;
-        })();
+     * Класс работы с ресурсами
+     */
+    var Resources = require('./class/resources');
+    me.Resources  = new Resources(conf.name, me.config);
         
 	
 				
@@ -247,6 +59,42 @@ module.exports = (function(){
 		
 		// ********** PUBLIC **********
 		
+    me.updateRights = function() {
+			_allRights = {};
+     
+      App.Users.Box.load();
+      me.Roles.load();
+          
+      var users = App.Users.Box.list();
+      for (var user in users) {
+        var rights = {};
+        if (!users[user].active) {
+            return;
+        };
+        
+        rights['*'] = true;
+        rights['@'] = true;
+        rights['#'] = users[user].isAdmin;
+        
+        users[user].roles.forEach((key) => {
+          var role = me.Roles.get(key);
+          if (typeof role === 'undefined' || !role.active) {
+            return;
+          };
+          
+          for (var key in role.rules) {
+            rights[key] = (rights[key] === false) ? false : role.rules[key];           
+          };
+          
+        });
+        
+        _allRights[users[user].login] = rights;
+      }; 
+      
+      console.param('updateRights', _allRights);
+      
+		};
+    
         /* Получить ресурс по умолчанию из конфиг файла */
 		me.Default = function(){
 			return [me.config.default];
@@ -266,36 +114,130 @@ module.exports = (function(){
 			return rights;
 		};
 		
+    
+    
+    
+    
 		// проверка наличия у сессии ролей с разрешенными группами
-		me.Check = function (ssid, action) {
-			// По ssid получае
-			return true;
+		me.check = function (ssid, action) {
+			// action for all
+      if (action === '*') {
+        return true;
+      }
+      
+      // Session not found
+      if (!App.Sessions.exist(ssid)){
+        return false;
+      }
+      
+      // User not logged
+      if (!App.Sessions.getData(ssid, 'isAuth')) {
+        return false;
+      }
+      
+      // Not User in to session
+      var login = App.Sessions.getData(ssid, 'User');
+      if (typeof login === 'undefined') {
+        return false;
+      }
+      
+      return me.checkByUser(login, action);
 		};
 		
-        App.Events.on('launched', () => {
-            me.Roles.load((err, data) => {
-                console.param('Roles.load', data);
-                
-                var role = new me.Role({
-                    name: 'Hello',
-                    description: 'Test role' 
-                });
-                
-                role.add('Libs.*');
-                role.add('Panels.*', false);
-                
-                me.Roles.list.push(role);
-                me.Roles.save(() => {});
-                
-            });
-            me.Resources.update((err, data) => {
-                console.param('Resource.list', data);
-            });  
-        });
+    
+    
+    
+    
+    me.checkByUser = function (login, action) {
+      if (typeof _allRights[login] === 'undefined') {
+        return false;
+      }
+      
+      if (typeof _allRights[login][action] === 'undefined') {
+        return false;
+      }
+      
+      return _allRights[login][action]; 
+		};
+    
+    
+   
+    /* Load data */
+    /*
+    App.Events.on('launched', () => {
+      
+      me.Resources.update((err, data) => {
+        console.param('Resource.list', data);
+      });
+      
+      me.Resources.update((err, data) => {
+        console.param('Resource.list', data);
+      });
+      
+    });
+    */
         
 		// ********** INIT **********
 		me.init = function(){
 			console.info('Init');
+      
+      /* Update Rights */
+      me.updateRights();
+       
+      /* Test Resources */
+      me.Resources.register(conf.name, {
+        module: conf.name,
+        name: conf.name+'.*',
+        title: conf.name+'.*',
+        description: 'Module: '+conf.name+'. Data: All.'
+      });
+      
+      me.Resources.update((err, data) => {
+        //console.param('Resource.list', data);
+      });   
+      
+      /* Test Roles */
+      /*
+      me.Roles.load((err, data) => {
+        console.param('Roles.list', data);         
+        
+        if (!me.Roles.find('name', 'Test role1')) {
+          
+          console.param('add role', me.Roles.add({
+            name: 'Test role1',
+            rules: {
+              'Libs.*': true,
+              'Forms.*': false,
+              'Panels.*': true
+            }
+          }));
+          
+          console.param('save', me.Roles.save());
+        };
+        
+        if (!me.Roles.find('name', 'Test role2')) {
+          
+          console.param('add role', me.Roles.add({
+            name: 'Test role2',
+            rules: {
+              'Libs.*': false,
+              'Panels.*': false
+            }
+          }));
+          
+          console.param('save', me.Roles.save());
+        };
+        
+      
+      });
+      */
+      
+      console.param('checkByUser user *', me.checkByUser('user', '*'));
+      console.param('checkByUser user @', me.checkByUser('user', '@'));
+      console.param('checkByUser user #', me.checkByUser('user', '#'));
+      console.param('checkByUser user Forms.*', me.checkByUser('user', 'Forms.*'));
+      console.param('checkByUser user Panels.*', me.checkByUser('user', 'Panels.*'));
+      
     };
         
 		// ********** END **********

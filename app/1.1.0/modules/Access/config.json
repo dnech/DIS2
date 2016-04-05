@@ -1,8 +1,8 @@
 {
 	"info": "Config module Access",
 	"default": "@",
-	"logger":{
-		"enable":false,
-		"prefix":"    "
+	"logger": {
+		"enable": true,
+		"prefix": "    "
 	}
 }
