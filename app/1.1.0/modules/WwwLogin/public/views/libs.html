@@ -1,0 +1,110 @@
+<div class="container" ng-controller="libsCtrl">
+  
+  <style>
+              
+    .ace_editor {
+      height: 50px;
+      border: 1px dashed gray;
+    }
+    
+    .ace_acl {
+      height: 50px;
+    }
+              
+    .ace_sandbox {
+      height: 300px;
+    }
+              
+    .ace_code {
+      height: 500px;
+    }
+  </style>
+  
+  
+  
+  <div class="card">
+        
+        <div class="card-header">
+            <h2>Редактор Библиотек</h2>
+        </div>
+        
+        <div class="card-body card-padding" addTab>
+
+            
+            <div class="fg-line">
+              <input type="text" ng-model="name" class="form-control fg-input input-lg" id="name" placeholder="Наименование">
+            </div>
+                
+            <div class="fg-line"> 
+                      
+            <tabset style="border: 1px dashed blue;">
+                
+                <tab heading="Список" active="true" index="0">
+                  <div class="btn-demo">
+                    <button class="btn btn-warning" ng-click="listUpdate();"><i class="zmdi zmdi-refresh"></i></button>       
+                  </div>
+                  
+                  <div class="fg-line">
+                    <ul>
+                      <li ng-repeat="(k, v) in list" ng-click="addTab(k)" >{{k + ' ('+v.type+')'}}</li>
+                    </ul>
+                    <div>{{listMsg | json}}</div>
+                    <br/>
+                  </div>
+                </tab>
+                
+                <!-- Lib -->
+                <tab ng-repeat="(k, v) in tabs" index="$index" active="active" heading="{{'(#'+k+') '+active+' '+v.name + (v.modifed ? '*' : '')}}">
+                  
+                  <div class="btn-demo">
+                    <button class="btn btn-success" ng-click="setData(k);"><i class="zmdi zmdi-check"></i> Сохранить</button>
+                    <button class="btn btn-danger"><i class="zmdi zmdi-close"></i> Дополнительно</button>        
+                  </div>
+                  
+                  <uib-tabset style="border: 1px dashed blue;">
+                    <uib-tab heading="Настройки" active="true">
+                      
+                      <div class="fg-line">
+                        <input type="text" ng-model="v.name" class="form-control fg-input input-lg" placeholder="Наименование" ng-change="change(k);">
+                      </div>
+            
+                      <div class="fg-line toggle-switch m-10 m-b-30">
+                        <label for="ts{{$index}}" class="ts-label">JavaScript</label>
+                        <input id="ts{{$index}}" ng-model="v.data.script" type="checkbox" hidden="hidden" ng-change="change(k);">
+                        <label for="ts{{$index}}" class="ts-helper"></label>
+                      </div>
+                          
+                      <div class="fg-line">
+                        <label class="fg-label m-10">ACL</label>
+                        <div class="ace_acl m-10" ui-ace="{
+                        onLoad: v.aceLoadedAcl
+                      }"></div>
+                      </div>
+                                   
+                      <div class="fg-line">
+                        <label class="fg-label m-10">SandBox</label>
+                        <div class="ace_sandbox m-10" ui-ace="{
+                        onLoad: v.aceLoadedSb
+                      }"></div>
+                      </div>
+                    </uib-tab>
+                    
+                    <uib-tab heading="Код">
+                      <div class="fg-line">
+                        <div class="m-5 h-100" ui-ace="{
+                        onLoad: v.aceLoadedSrc
+                      }"></div>
+                      </div>
+                    </uib-tab>
+                  </uib-tabset>  
+                    
+                </tab>
+                
+            </tabset>  
+              
+            </div>
+            
+        </div>
+    </div>
+  
+</div>

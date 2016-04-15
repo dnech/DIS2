@@ -5,7 +5,7 @@
 	"direct_url": "direct/rpc",
 	"trace": false,
 	"logger": {
-		"enable": false,
+		"enable": true,
 		"prefix": "    "
 	}
 }

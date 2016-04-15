@@ -1,6 +1,6 @@
 /*  MODULE WWW Login Test */
 module.exports = (function(){	
-	var Required = ['Gate', 'Sessions', 'Direct', 'Libs'];
+	var Required = ['Gate', 'Access', 'Sessions', 'Direct', 'Libs'];
 	var Module = function(conf){
 		var me = conf;
 		// ********** BEGIN **********
@@ -20,23 +20,42 @@ module.exports = (function(){
 		
 		//Registre route
 		App.Gate.regRoute('WWW Login Test: "'+base_url+'"', function(server, express){
-					
-			// Libs
-			server.get(base_url+'lib/:ssid/:content', function(req, res) {
-				App.Libs.Content(req.params.ssid, req.params.content, {}, {}, function(err, data){
-					if (err) {return res.end();}
+		
+
+    
+    // Тест соединения
+    server.get(base_url+'wait', function(req, res) {
+			res.end(App.Sessions.routerControl(req) ? '1' : '0');
+		});
+    
+    // Инициализация сессии
+    server.get(base_url, function(req, res) {
+			App.Sessions.routerInit(req, res, base_url+'auth/login.html', base_url+'index.html');
+		});
+		
+    // Проверка сессии для каждого запроса
+		server.get(base_url+'*', function(req, res, next) {
+		 	App.Sessions.routerCheck(req, res, next, base_url); 
+		});
+		
+		// Libs
+		server.get(base_url+'lib/:content', function(req, res) {
+      App.Libs.content(req.ssid, req.params.content, {}, {}, function(err, data){
+        if (err) {return res.end();}
 					res.end(data);
-				});
-			});	
+			});
+		});	
 			
-			// Libs Template
-			server.get(base_url+'cont/:ssid/:content', function(req, res) {
-				App.Libs.Content(req.params.ssid, 'template', {dir: dir_private, page: req.params.content}, {}, function(err, data){
-					if (err) {return res.end();}
-					res.end(data);
-				});
-			});	
-			
+		// Libs Template
+		server.get(base_url+'cont/:content', function(req, res) {
+			App.Libs.content(req.ssid, 'template', {ssid: req.ssid, dir: dir_private, page: req.params.content}, {}, function(err, data){
+				if (err) {return res.end();}
+				res.end(data);
+			});
+		});	
+		
+
+    
 			// Direct
 			App.Direct.regRoute(server, {
 				namespace: 'App.Direct',
@@ -54,6 +73,15 @@ module.exports = (function(){
 			
 		});
 		
+    
+    var userDirect = App.Access.Users.directHelper(); 
+		App.Direct.on({
+		  Users: userDirect.Users
+		}, '*');
+    App.Direct.on({
+		  AdminArea: userDirect.AdminArea
+		}, '#');
+    
 		// ********** INIT **********
 		me.init = function(){
 			console.info('Init');

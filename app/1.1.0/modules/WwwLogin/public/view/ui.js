@@ -753,7 +753,7 @@ function getPanel(name, content, data) {
 	$(content).html('<section class="content-header"><h1><center><div class="overlay"><i class="fa fa-refresh fa-spin"></i></div></center></h1></section>');
 	if (typeof data === 'undefined') {data = '';}
 	var param = {name:name, data:data};
-	Direct.Panels.Content(param,
+	App.Direct.Panels.content(param,
 		function(answer){
 			$(content).html(answer.data);
 			$(answer.name).data('code').Init(data);
@@ -768,7 +768,7 @@ function getServerContent(name, content, data) {
 	$(content).html('<section class="content-header"><h1><center><div class="overlay"><i class="fa fa-refresh fa-spin"></i></div></center></h1></section>');
 	if (typeof data === 'undefined') {data = '';}
 	var param = {name:name, data:data};
-	Direct.Forms.getContent(param,
+	App.Direct.Forms.getContent(param,
 		function(answer){
 			$(content).html(answer.data);
 		},

@@ -156,7 +156,7 @@ function RunPanel() {
 		$('#myModal').on('shown.bs.modal', function() {
 			console.log('#myModal shown.bs.modal');
 			var name = $('#panel_name').val();
-			Direct.Panels.Content(
+			App.Direct.Panels.content(
 				name,
 				function(msg){
 					PreviewId = msg.name;
@@ -175,7 +175,7 @@ function RunPanel() {
 }
 
 function ListPanel(){
-	Direct.Panels.List(
+	App.Direct.Panels.list(
 		'',
 		function(ans){
 			var list = '';
@@ -192,7 +192,7 @@ function ListPanel(){
 }
 
 function LoadPanel(name){
-	Direct.Panels.Get(
+	App.Direct.Panels.get(
 		name,
 		function(ans){
 			//console.log('Load: ', ans.data);
@@ -214,7 +214,7 @@ function LoadPanel(name){
 }
 
 function SavePanel(ok, err){
-	Direct.Panels.Set(
+	App.Direct.Panels.set(
 		{
 			name: $('#panel_name').val(),
 			data: {
@@ -237,7 +237,7 @@ function SavePanel(ok, err){
 }
 
 $.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js',function(){
-  $.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-language_tools.js',function(){
+$.getScript('http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-language_tools.js',function(){
 	
 	//console.log('content_Content', $("#content_Content").height());
 	//console.log('nav-tabs-custom', $(".nav-tabs-custom").height());

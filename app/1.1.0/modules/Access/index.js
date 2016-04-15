@@ -5,7 +5,7 @@
 */
 "use strict";
 module.exports = (function(){	
-	var Required = ['Logger', 'Storage', 'Users', 'Sessions'];
+	var Required = ['Logger', 'Storage', 'Sessions'];
 	var Module = function(conf){
 		var me = App.namespace(conf.name, conf);
 		// ********** BEGIN **********
@@ -19,15 +19,16 @@ module.exports = (function(){
     var Events = require('events');
     var VError = require('verror');
     
-    var Errors = {
-      'session_not_found':       {module:conf.name, code:'501', message:'Session not found'},
-      'incorrect_user_password': {module:conf.name, code:'502', message:'The username or password is incorrect'},
-      'not_logged':              {module:conf.name, code:'503', message:'User is not logged'},
-      'not_found':               {module:conf.name, code:'504', message:'User not found'}
-    }
-    
+    //------------------------------------------------------------------------------------
+
     var _allRights = {};
     
+    /**
+     * Класс работы с пользователями
+    */
+    var Users = require('./class/users');
+    me.Users = new Users(conf.name, me.config);
+    me.Users.load();
     
     /**
      * Класс работы с ролями
@@ -62,10 +63,10 @@ module.exports = (function(){
     me.updateRights = function() {
 			_allRights = {};
      
-      App.Users.Box.load();
+      me.Users.load();
       me.Roles.load();
           
-      var users = App.Users.Box.list();
+      var users = me.Users.list();
       for (var user in users) {
         var rights = {};
         if (!users[user].active) {
@@ -95,49 +96,63 @@ module.exports = (function(){
       
 		};
     
-        /* Получить ресурс по умолчанию из конфиг файла */
-		me.Default = function(){
-			return [me.config.default];
-		};
-		
-		me.Declare = function(acl){
-			if (typeof acl === 'string') {
-				acl = [acl];
+    
+    /* Получить ресурс по умолчанию из конфиг файла */
+		me.defAcl = function(acl) {
+      if (typeof acl === 'string') {
+				return [acl];
 			}
-			return acl;
-		};
-		
-		me.GetRights = function (ssid){
-			var rights = ['*'];
-			//if (App.Users.isRegistred) {rights.push('@');}
-			//if (App.Users.isRegistred) {rights.push('@');}
-			return rights;
+      if (typeof acl === undefined || !Array.isArray(acl)) {
+        return [me.config.default];
+      }
+      return acl;
 		};
 		
     
-    
-    
+    // проверка наличия у сессии ролей с разрешенными группами
+		me.check = function (ssid, action) {
+      console.info('Check', ssid, action);
+      
+      if (typeof action === 'string') {
+        return me.checkBySsid(ssid, action);
+      }
+      
+      var ret = false;
+      if (Array.isArray(action)) {
+        action.forEach((act) => {
+          if (me.checkBySsid(ssid, act)) {
+            ret = true;
+          }
+        });
+      }
+      return ret;
+		};
     
 		// проверка наличия у сессии ролей с разрешенными группами
-		me.check = function (ssid, action) {
-			// action for all
+		me.checkBySsid = function (ssid, action) {
+			
+      // action for all
       if (action === '*') {
+        console.info('checkBySsid True (*)', ssid, action);
         return true;
       }
       
       // Session not found
       if (!App.Sessions.exist(ssid)){
+        console.info('checkBySsid False (not sessions)', ssid, action);
         return false;
       }
       
       // User not logged
       if (!App.Sessions.getData(ssid, 'isAuth')) {
+        console.info('checkBySsid False (not isAuth)', ssid, action);
         return false;
       }
       
       // Not User in to session
       var login = App.Sessions.getData(ssid, 'User');
       if (typeof login === 'undefined') {
+        console.info('checkBySsid False (not set User)', ssid, action, login);
         return false;
       }
       
@@ -150,14 +165,18 @@ module.exports = (function(){
     
     me.checkByUser = function (login, action) {
       if (typeof _allRights[login] === 'undefined') {
+        console.info('checkBySsid False (not User)', login, action);
         return false;
       }
       
       if (typeof _allRights[login][action] === 'undefined') {
+        console.info('checkBySsid False (not Rights)', login, action);
         return false;
       }
       
-      return _allRights[login][action]; 
+      var ret = _allRights[login][action];
+      console.info('checkBySsid Rights: '+ret, login, action);
+      return ret; 
 		};
     
     

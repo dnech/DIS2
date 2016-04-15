@@ -28,8 +28,9 @@ module.exports = (function(){
 		};
 		
 		var errSting = function(err){
-			console.trace('errSting', err);
-			return ''+err;
+			//console.trace('errSting', err);
+			return require('util').inspect(err);
+      //return err;
 		};
 		
 		var SendOk = function(name, param, ans){
@@ -63,7 +64,7 @@ module.exports = (function(){
 			if (typeof fnobj === 'object' && typeof fnobj.fn === 'function') {
 				
 				// Проверка прав доступа
-				if (!App.Access.Check(ssid, fnobj.acl)) {
+				if (!App.Access.check(ssid, fnobj.acl)) {
 					res.end(SendError('E005', err, query.name));
 					return;
 				}
@@ -91,7 +92,8 @@ module.exports = (function(){
 								data = modify.data;
 							}
 							if (err) { // ERROR 
-								res.end(SendError('E004', errSting(err), query.name, query.param));
+								console.error(err);
+                res.end(SendError('E004', errSting(err), query.name, query.param));
 							} else { // OK
 								res.end(SendOk(query.name, query.param, JSON.stringify(data)));
 							}
@@ -152,18 +154,18 @@ module.exports = (function(){
 			*/
 			switch (a.length) {
 				case 1:
-					addFunctions(DirectFunctions, a[0], App.Access.Default());
+					addFunctions(DirectFunctions, a[0], App.Access.defAcl());
 					return true;
 				case 2:
 					if (typeof a[0] === 'string') { 
-						DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.Default());
+						DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.defAcl());
 						return true;
 					} else {
-						addFunctions(DirectFunctions, a[0], App.Access.Declare(a[1]));
+						addFunctions(DirectFunctions, a[0], App.Access.defAcl(a[1]));
 						return true;
 					}
 				case 3:
-					DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.Declare(a[2]));
+					DirectFunctions[a[0]] = addFunctions(DirectFunctions[a[0]], a[1], App.Access.defAcl(a[2]));
 					return true;		
 			}
 			return false;
@@ -204,10 +206,17 @@ module.exports = (function(){
 			ssid = ssid || '00000000-0000-0000-0000-000000000000';
 			var fnlist = '';
 			function parse(obj, path, tabs){
-				for (name in obj){
-					if (typeof obj[name] === 'object' && typeof obj[name].fn === 'function') {
+        var sorted = Object.keys(obj).sort();
+        sorted.forEach((name)=>{
+        //for (name in obj){
+					if (name === 'AdminArea') {
+            if (!App.Access.check(ssid, '#')) {
+              return;
+            }
+          }
+          if (typeof obj[name] === 'object' && typeof obj[name].fn === 'function') {
 						// Проверка прав доступа
-						if (App.Access.Check(ssid, obj[name].acl)) {
+						if (App.Access.check(ssid, obj[name].acl)) {
 							fnlist += tabs+me.getFunctionJs(NameSpace, path, name, obj[name].info);
 						}
 					} else if (typeof obj[name] === 'object') {
@@ -215,7 +224,8 @@ module.exports = (function(){
 						parse(obj[name], path+'.'+name, tabs+'  ');
 						fnlist += tabs+'},\n';
 					}
-				}	
+				}
+        );         
 			}
 			parse(DirectFunctions, NameSpace, '  ');
 					
@@ -224,32 +234,33 @@ module.exports = (function(){
 				NameSpace+'Api = {\n'+
 				' trace: '+me.config.trace+',\n'+
 				' ssid: "'+ssid+'",\n'+
-				' send: function(name, param, callback){\n'+
-				'	if ('+NameSpace+'Api.trace) {console.time(name);};\n'+
-				'	param = JSON.stringify(param);\n'+
+				' send: function(n, p, cb){\n'+
+				'	if ('+NameSpace+'Api.trace) {console.time(n);};\n'+
+				'	p = JSON.stringify(p);\n'+
 				'	var url=location.protocol+"//"+location.host+"'+base_url+me.config.direct_url+'";\n'+
-				'	$.ajax({\n'+
+				'/* jQuery Ajax */\n'+
+        '	$.ajax({\n'+
 				'	  method: "POST",\n'+
 				'	  url: url,\n'+
-				'	  data: {ssid:'+NameSpace+'Api.ssid, data:{name: name, param: param}}\n'+
+				'	  data: {ssid:'+NameSpace+'Api.ssid, data:{name: n, param: p}}\n'+
 				'	})\n'+
 				'	  .done(function(msg) {\n'+
 				'		try {\n'+
-				'			var tAnswer = JSON.parse(\'{"data":\'+msg+\'}\').data;\n'+
-				'			if (tAnswer.success) {\n'+
-				'				var tRes = tAnswer.result;\n'+
+				'			var a = JSON.parse(\'{"data":\'+msg+\'}\').data;\n'+
+				'			if (a.success) {\n'+
+				'				var tRes = a.result;\n'+
 				'				if (typeof tRes !== \'undefined\') {\n'+
 				'					tRes = JSON.parse(\'{"data":\'+tRes+\'}\').data;\n'+
 				'				}\n'+
-				'				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n'+
-				'				if (typeof callback === \'function\') {callback(null, tRes);}\n'+
+				'				if ('+NameSpace+'Api.trace) {console.timeEnd(n);};\n'+
+				'				if (typeof cb === \'function\') {cb(null, tRes);}\n'+
 				'			} else {\n'+
-				'				if ('+NameSpace+'Api.trace) {console.timeEnd(name);};\n'+
-				'				if (typeof callback === \'function\') {callback(tAnswer);}\n'+
+				'				if ('+NameSpace+'Api.trace) {console.timeEnd(n);};\n'+
+				'				if (typeof cb === \'function\') {cb(a);}\n'+
 				'			}\n'+
-				'		} catch(error) {\n'+
-				'			console.error(\'Unknow\', error);\n'+
-				'			if (typeof callback === \'function\') {callback(error);}\n'+
+				'		} catch(e) {\n'+
+				'			console.error(\'Unknow\', e);\n'+
+				'			if (typeof cb === \'function\') {cb(e);}\n'+
 				'		}\n'+
 				'	});\n'+
 				'}};\n'+

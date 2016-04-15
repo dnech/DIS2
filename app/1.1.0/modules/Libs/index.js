@@ -25,7 +25,7 @@ module.exports = (function(){
 				console.trace('compileSandbox:1', typeof src, src);
 				//var script  = new vm.Script("(function(){return function(){ return "+src+" ; };})();", { filename: 'Libs/'+name+'_sanbox' });
 				//var data    = script.runInThisContext();		
-				data = eval('new Object('+src+')');
+				var data = eval('new Object('+src+')');
 				return callback(null, data);
 			} catch(error) {
 				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'compileSandbox("'+name+'")', error.name);
@@ -38,8 +38,11 @@ module.exports = (function(){
 		function runScript(src, sandbox, name, callback){
 			name = name || 'unknow';
 			try {
-				var script  = new vm.Script("(function(){return function(){ "+src+" };})();", { filename: 'Libs/'+name });
-				var data    = script.runInContext(new vm.createContext(sandbox));
+				console.trace('runScript:1', typeof src, src);
+        var script  = new vm.Script("(function(){return function(){ "+src+" };})();", { filename: 'Libs/'+name });
+				console.trace('runScript:2', typeof script, script);
+        var data    = script.runInContext(new vm.createContext(sandbox));
+        console.trace('runScript:3', typeof data, data);
 				return callback(null, data());
 			} catch(error) {
 				error = new VError(error, 'Module.%s.%s > %s', conf.name, 'runScript("'+name+'")', error.name);
@@ -63,7 +66,7 @@ module.exports = (function(){
 				
 				// set file config on default
 				data = App.utils.extend(true, {
-					acl: '*',
+					acl: conf.name+'*',
 					script: false,
 					sandbox: {},
 					src: ''
@@ -71,7 +74,7 @@ module.exports = (function(){
 				console.trace('me.content:3', data);
 				
 				// Acl
-				if (!App.Access.Check(ssid, data.acl)) {
+				if (!App.Access.check(ssid, conf.name+'.*') && !App.Access.check(ssid, data.acl)) {
 					console.trace('me.content:4', 'Error: access denied!');
 					return callback('Error: access denied!');
 				}
@@ -164,8 +167,8 @@ module.exports = (function(){
 		
     // Direct for admin
 		App.Direct.on({
-			Libs: {
-        Box: me.Box.Direct
+			AdminArea: {
+        Libs: me.Box.Direct
       }  
 		}, '#');
     

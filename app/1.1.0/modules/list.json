@@ -4,13 +4,13 @@
 		"Logger",
     "Storage",
     "Sessions",
-    "Users",
     "Access",
     "Direct",
 		"Gate",
     "WwwLogin"		
 	],
   "unused": [
+    "Users",
   	"Libs",
 		"Panels",
     "Files",

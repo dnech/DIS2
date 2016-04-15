@@ -1,6 +1,6 @@
 {
 	"info": "Config module Sessions",
-	"timeout": 10000,
+	"timeout": 600000,
   "cookie": "D-SSID",
 	"logger": {
 		"enable": false,

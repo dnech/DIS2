@@ -50,7 +50,7 @@ module.exports = (function(){
 		
 		me.create = function () {
 			var ssid = require('node-uuid').v4();
-			sessions[ssid] = {active: true, data:{isRegistred:false}, create: new Date(), update: new Date(), status:'created'};
+			sessions[ssid] = {active: true, data:{isAuth:false}, create: new Date(), update: new Date(), status:'created'};
 			console.log('Sessions create', sessions[ssid], me.list());
 			return ssid;
 		};
@@ -119,7 +119,7 @@ module.exports = (function(){
 			var ssid = req.cookies[me.config.cookie];
 			if (me.exist(ssid)) {
 				me.update(ssid);
-				if (me.getData(ssid, 'isRegistred')) {
+				if (me.getData(ssid, 'isAuth')) {
 					res.redirect(url_work);
 				} else {
 					res.redirect(url_login);
@@ -131,18 +131,25 @@ module.exports = (function(){
 			}
 		};
 		
-		me.routerCheck = function(req, res, next, url_init) {
-			var ssid = req.cookies[me.config.cookie];
-			if (!me.exist(ssid)) {
-				res.redirect(url_init);
-			} else {
-				me.update(ssid);
-				me.setData(ssid, 'Connect', {agent: req.headers['user-agent'], ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress)});
-				//console.log('SSID', {agent: req.headers['user-agent'], ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress)});
-				next();
+    me.routerControl = function(req) {
+			req.ssid = req.cookies[me.config.cookie];
+			if (!me.exist(req.ssid)) {
+				return false;
 			}
+			me.update(req.ssid);
+			me.setData(req.ssid, 'Connect', {agent: req.headers['user-agent'], ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress)});
+      return true;
 		};
-			
+    
+		me.routerCheck = function(req, res, next, url_init) {
+			if (me.routerControl(req)) {
+        return next();
+      }
+      res.redirect(url_init);
+		};
+		
+    
+    
 		// ********** INIT **********
 		me.init = function(){
 			console.info('Init');
