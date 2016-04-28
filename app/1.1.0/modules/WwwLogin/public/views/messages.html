@@ -5,7 +5,7 @@
 
     <div class="card m-b-0" id="messages-main">
 
-        <div class="ms-menu" data-ng-class="{ 'toggled': mactrl.lvMenuStat }">
+        <div class="ms-menu" data-ng-class="{ 'toggled': appctrl.lvMenuStat }">
             <div class="ms-block">
                 <div class="ms-user">
                     <img src="img/profile-pics/4.jpg" alt="">
@@ -115,7 +115,7 @@
         <div class="ms-body">
             <div class="listview lv-message">
                 <div class="lv-header-alt clearfix">
-                    <div id="ms-menu-trigger"  data-ng-class="{ 'open': mactrl.lvMenuStat }" data-ng-click="mactrl.lvMenuStat = (mactrl.lvMenuStat===true ? false : true )">
+                    <div id="ms-menu-trigger"  data-ng-class="{ 'open': appctrl.lvMenuStat }" data-ng-click="appctrl.lvMenuStat = (appctrl.lvMenuStat===true ? false : true )">
                         <div class="line-wrap">
                             <div class="line top"></div>
                             <div class="line center"></div>

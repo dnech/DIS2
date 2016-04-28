@@ -20,39 +20,39 @@ module.exports = (function(){
 		
 		//Registre route
 		App.Gate.regRoute('WWW Login Test: "'+base_url+'"', function(server, express){
-		
-
-    
-    // Тест соединения
-    server.get(base_url+'wait', function(req, res) {
-			res.end(App.Sessions.routerControl(req) ? '1' : '0');
-		});
-    
-    // Инициализация сессии
-    server.get(base_url, function(req, res) {
-			App.Sessions.routerInit(req, res, base_url+'auth/login.html', base_url+'index.html');
-		});
-		
-    // Проверка сессии для каждого запроса
-		server.get(base_url+'*', function(req, res, next) {
-		 	App.Sessions.routerCheck(req, res, next, base_url); 
-		});
-		
-		// Libs
-		server.get(base_url+'lib/:content', function(req, res) {
-      App.Libs.content(req.ssid, req.params.content, {}, {}, function(err, data){
-        if (err) {return res.end();}
-					res.end(data);
-			});
-		});	
-			
-		// Libs Template
-		server.get(base_url+'cont/:content', function(req, res) {
-			App.Libs.content(req.ssid, 'template', {ssid: req.ssid, dir: dir_private, page: req.params.content}, {}, function(err, data){
-				if (err) {return res.end();}
-				res.end(data);
-			});
-		});	
+		   
+      // Тест соединения
+      server.get(base_url+'wait', function(req, res) {
+        var control = App.Sessions.routerControl(req);
+        res.end((control.session ? '1' : '0')+':'+(control.authorized ? '1' : '0'));
+      });
+      
+      // Инициализация сессии
+      server.get(base_url, function(req, res) {
+        App.Sessions.routerInit(req, res, base_url+'auth/login.html', base_url+'index.html');
+      });
+      
+      // Проверка сессии для каждого запроса
+      server.get(base_url+'*', function(req, res, next) {
+        // 403 Forbidden
+        App.Sessions.routerCheck(req, res, next); 
+      });
+      
+      // Libs
+      server.get(base_url+'lib/:content', function(req, res) {
+        App.Libs.content(req.ssid, req.params.content, {ssid: req.ssid, dir: dir_private, page: req.params.content}, {}, function(err, data){
+          if (err) {return res.end();}
+            res.end(data);
+        });
+      });	
+        
+      // Libs Template
+      server.get(base_url+'cont/:content', function(req, res) {
+        App.Libs.content(req.ssid, 'template', {ssid: req.ssid, dir: dir_private, page: req.params.content}, {}, function(err, data){
+          if (err) {return res.end();}
+          res.end(data);
+        });
+      });	
 		
 
     

@@ -52,7 +52,7 @@ function Run() {
 		  url: '/test/wait',
 		  success: function(res){
         $('#connect_error').hide();
-        if (res !== '1') {
+        if (res !== '1:0' && res !== '1:1') {
           location.reload();
         }
 		  },
@@ -61,7 +61,7 @@ function Run() {
         $('#connect_error').show();
 		  }
 		});
-	}, 10000);
+	}, 5000);
 }
 
 $(function() {

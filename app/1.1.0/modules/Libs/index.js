@@ -20,7 +20,7 @@ module.exports = (function(){
 		// ********** PRIVATE **********
 		
 		// Создание пространства переменных из строки для передачи в скрипт
-		function compileSandbox(src, name, callback){
+		function compileSandbox(src, request, callback){
 			try {
 				console.trace('compileSandbox:1', typeof src, src);
 				//var script  = new vm.Script("(function(){return function(){ return "+src+" ; };})();", { filename: 'Libs/'+name+'_sanbox' });
@@ -64,6 +64,10 @@ module.exports = (function(){
 				console.trace('me.content:2', err, data);
 				if (err) {return callback(err, data);}			
 				
+        if (!data.enable) {
+          return callback('Error: disable!');
+        }
+        
 				// set file config on default
 				data = App.utils.extend(true, {
 					acl: conf.name+'*',
@@ -80,7 +84,7 @@ module.exports = (function(){
 				}
 				
 				// Форматирование пространства
-				compileSandbox(data.sandbox, name, function(err, compile_sandbox) {
+				compileSandbox(data.sandbox, {ssid: ssid, name:name, config:config, sandbox:sandbox}, function(err, compile_sandbox) {
 					if (err) {return callback(err, compile_sandbox);}	
 					sandbox = App.utils.extend(true, compile_sandbox, sandbox);
 					if (!data.script) {

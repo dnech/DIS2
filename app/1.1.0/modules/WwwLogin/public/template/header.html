@@ -1,5 +1,5 @@
 <ul class="header-inner clearfix">
-    <li id="menu-trigger" data-target="mainmenu" data-toggle-sidebar data-model-left="mactrl.sidebarToggle.left" data-ng-class="{ 'open': mactrl.sidebarToggle.left === true }">
+    <li id="menu-trigger" data-target="mainmenu" data-toggle-sidebar data-model-left="appctrl.sidebarToggle.left" data-ng-class="{ 'open': appctrl.sidebarToggle.left === true }">
         <div class="line-wrap">
             <div class="line top"></div>
             <div class="line center"></div>
@@ -8,7 +8,7 @@
     </li>
 
     <li class="logo hidden-xs">
-        <a data-ui-sref="home" data-ng-click="mactrl.sidebarStat($event)">{{mactrl.Title || "DIS"}}</a>
+        <a data-ui-sref="home" data-ng-click="appctrl.sidebarStat($event)">{{appctrl.Title || "DIS"}}</a>
     </li>
 
     <li class="pull-right">
@@ -156,12 +156,12 @@
                 </a>
                 <ul class="dropdown-menu dm-icon pull-right">
                     <li class="skin-switch hidden-xs">
-                        <span ng-repeat="w in mactrl.skinList | limitTo : 50" class="ss-skin bgm-{{ w }}" data-ng-click="mactrl.skinSwitch(w)"></span>
+                        <span ng-repeat="w in appctrl.skinList | limitTo : 50" class="ss-skin bgm-{{ w }}" data-ng-click="appctrl.skinSwitch(w)"></span>
                     </li>
                     <li class="divider hidden-xs"></li>
                     <li id="toggle-width">
                       <div class="toggle-switch">
-                        <input id="tw-switch" type="checkbox" hidden="hidden" data-change-layout="mactrl.layoutType">
+                        <input id="tw-switch" type="checkbox" hidden="hidden" data-change-layout="appctrl.layoutType">
                         <label for="tw-switch" class="ts-helper"></label>
                       </div>
                     </li>
@@ -179,7 +179,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="hidden-xs" data-target="chat" data-toggle-sidebar data-model-right="mactrl.sidebarToggle.right" data-ng-class="{ 'open': mactrl.sidebarToggle.right === true }">
+            <li class="hidden-xs" data-target="chat" data-toggle-sidebar data-model-right="appctrl.sidebarToggle.right" data-ng-class="{ 'open': appctrl.sidebarToggle.right === true }">
                 <a href=""><i class="tm-icon zmdi zmdi-comment-alt-text"></i></a>
             </li>
         </ul>

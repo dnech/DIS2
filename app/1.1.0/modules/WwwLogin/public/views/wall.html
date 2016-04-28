@@ -41,15 +41,15 @@
                 <div class="card-body card-padding">
                     <textarea class="wp-text" data-auto-size placeholder="Write Something..."></textarea>
                     
-                    <div class="wp-media" data-ng-if="mactrl.wallImage">
+                    <div class="wp-media" data-ng-if="appctrl.wallImage">
                         Images - Coming soon...
                     </div>
                     
-                    <div class="wp-media" data-ng-if="mactrl.wallVideo">
+                    <div class="wp-media" data-ng-if="appctrl.wallVideo">
                         Video Links - Coming soon...
                     </div>
                     
-                    <div class="wp-media" data-ng-if="mactrl.wallLink">
+                    <div class="wp-media" data-ng-if="appctrl.wallLink">
                         Links - Coming soon...
                     </div>
                 </div>
@@ -57,9 +57,9 @@
                 <ul class="list-unstyled clearfix wpb-actions">
                     <li class="wpba-attrs">
                         <ul class="list-unstyled list-inline m-l-0 m-t-5">
-                            <li><a data-wpba="image" href="" data-ng-class="{ 'active': mactrl.wallImage }" data-ng-click="mactrl.wallImage = true; mactrl.wallVideo = false; mactrl.wallLink = false"><i class="zmdi zmdi-image"></i></a></li>
-                            <li><a data-wpba="video" href="" data-ng-class="{ 'active': mactrl.wallVideo }" data-ng-click="mactrl.wallVideo= true; mactrl.wallImage = false; mactrl.wallLink = false"><i class="zmdi zmdi-play-circle"></i></a></li>
-                            <li><a data-wpba="link" href="" data-ng-class="{ 'active': mactrl.wallLink }" data-ng-click="mactrl.wallLink = true; mactrl.wallImage = false; mactrl.wallVideo = false"><i class="zmdi zmdi-link"></i></a></li>
+                            <li><a data-wpba="image" href="" data-ng-class="{ 'active': appctrl.wallImage }" data-ng-click="appctrl.wallImage = true; appctrl.wallVideo = false; appctrl.wallLink = false"><i class="zmdi zmdi-image"></i></a></li>
+                            <li><a data-wpba="video" href="" data-ng-class="{ 'active': appctrl.wallVideo }" data-ng-click="appctrl.wallVideo= true; appctrl.wallImage = false; appctrl.wallLink = false"><i class="zmdi zmdi-play-circle"></i></a></li>
+                            <li><a data-wpba="link" href="" data-ng-class="{ 'active': appctrl.wallLink }" data-ng-click="appctrl.wallLink = true; appctrl.wallImage = false; appctrl.wallVideo = false"><i class="zmdi zmdi-link"></i></a></li>
                         </ul>
                     </li>
 
@@ -171,20 +171,20 @@
                     
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[1]" data-ng-click="mactrl.wallCommenting[1] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[1]" data-ng-click="appctrl.wallCommenting[1] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[1]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[1]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[1] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[1] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -224,20 +224,20 @@
                     
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[2]" data-ng-click="mactrl.wallCommenting[2] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[2]" data-ng-click="appctrl.wallCommenting[2] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[2]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[2]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[2] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[2] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -318,20 +318,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[3]" data-ng-click="mactrl.wallCommenting[3] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[3]" data-ng-click="appctrl.wallCommenting[3] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[3]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[3]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[3] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[3] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -414,20 +414,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[4]" data-ng-click="mactrl.wallCommenting[4] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[4]" data-ng-click="appctrl.wallCommenting[4] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[4]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[4]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[4] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[4] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -569,20 +569,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[5]" data-ng-click="mactrl.wallCommenting[5] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[5]" data-ng-click="appctrl.wallCommenting[5] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[5]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[5]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[5] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[5] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -672,20 +672,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[6]" data-ng-click="mactrl.wallCommenting[6] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[6]" data-ng-click="appctrl.wallCommenting[6] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[6]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[6]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[6] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[6] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -745,20 +745,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[7]" data-ng-click="mactrl.wallCommenting[7] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[7]" data-ng-click="appctrl.wallCommenting[7] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[7]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[7]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[7] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[7] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -968,20 +968,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[8]" data-ng-click="mactrl.wallCommenting[8] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[8]" data-ng-click="appctrl.wallCommenting[8] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[8]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[8]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[8] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[8] = false">Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -1136,20 +1136,20 @@
                                         
                     <!-- Comment form -->
                     <div class="wcl-form">
-                        <div class="wc-comment" data-ng-if="!mactrl.wallCommenting[5]" data-ng-click="mactrl.wallCommenting[5] = true">
+                        <div class="wc-comment" data-ng-if="!appctrl.wallCommenting[5]" data-ng-click="appctrl.wallCommenting[5] = true">
                             <div class="wcc-inner">
                                 Write Something...
                             </div>
                         </div>
                         
-                        <div class="wc-comment" data-ng-if="mactrl.wallCommenting[5]">
+                        <div class="wc-comment" data-ng-if="appctrl.wallCommenting[5]">
                             <div class="wcc-inner">
                                 <textarea class="wcci-text" data-auto-size placeholder="Write Something..."></textarea>
                             </div>
                             
                             <div class="m-t-15">
                                 <button class="btn btn-sm btn-primary">Post</button>
-                                <button class="btn btn-sm btn-link" data-ng-click="mactrl.wallCommenting[5] = false">Cancel</button>
+                                <button class="btn btn-sm btn-link" data-ng-click="appctrl.wallCommenting[5] = false">Cancel</button>
                             </div>
                         </div>
                     </div>

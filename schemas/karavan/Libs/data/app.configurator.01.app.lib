@@ -1,0 +1,1 @@
+{"enable":true,"script":false,"acl":"#","sandbox":"{}","src":"var appDIS = angular.module('appDIS', [\r\n    'ngAnimate',\r\n    'ngResource',\r\n    'ui.router',\r\n    'ui.bootstrap',\r\n    'ui.ace',\r\n    'angular-loading-bar',\r\n    'oc.lazyLoad',\r\n    'nouislider',\r\n    'ngTable',\r\n    'ui.tab.scroll'\r\n])"}

@@ -1,12 +1,12 @@
 <div class="sidebar-inner c-overflow">    
-    <div class="profile-menu">
+    <div class="profile-menu" data-ng-controller="profileMenuCtrl">
         <a href="" toggle-submenu>
-            <div class="profile-pic">
-                <img src="img/profile-pics/1.jpg" alt="">
+            <div class="profile-pic" ng-class="{ 'profile-error': !connect }">
+                <img src="{{image}}" alt="">
             </div>
 
             <div class="profile-info">
-                Malinda Hollaway
+                {{name}}
 
                 <i class="zmdi zmdi-caret-down"></i>
             </div>
@@ -14,143 +14,141 @@
 
         <ul class="main-menu">
             <li>
-                <a data-ui-sref="pages.profile.profile-about" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-account"></i> View Profile</a>
+                <a data-ui-sref="pages.profile.profile-about" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-account"></i> Профиль</a>
             </li>
             <li>
-                <a href=""><i class="zmdi zmdi-input-antenna"></i> Privacy Settings</a>
-            </li>
-            <li>
-                <a href=""><i class="zmdi zmdi-settings"></i> Settings</a>
-            </li>
-            <li>
-                <a href=""><i class="zmdi zmdi-time-restore"></i> Logout</a>
+                <a data-ng-click="logout()"><i class="zmdi zmdi-time-restore"></i> Выход</a>
             </li>
         </ul>
     </div>
 
-    <!--ul class="main-menu" data-ng-controller="menuCtrl as menu">
+    <ul class="main-menu" data-ng-controller="menuCtrl as menu">
         <li ng-hide="m.items" data-ui-sref-active="active" ng-repeat="m in menu.menuList" >
-          <a data-ui-sref="{{m.sref}}" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-{{m.icon}}"></i> {{m.name}}</a>
+          <a data-ui-sref="{{m.sref}}" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-{{m.icon}}"></i> {{m.name}}</a>
         </li>
         
-        <li ng-show="m.items" class="sub-menu" ng-repeat="m in menu.menuList" data-ng-class="{ 'active toggled': mactrl.$state.includes(m.sref) }">
+        <li ng-show="m.items" class="sub-menu" ng-repeat="m in menu.menuList" data-ng-class="{ 'active toggled': appctrl.$state.includes(m.sref) }">
             <a href="" toggle-submenu><i class="zmdi zmdi-{{m.icon}}"></i> {{m.name}}</a>
             <ul>
-                <li ng-repeat="i in m.items"><a data-ui-sref-active="active" data-ui-sref="{{i.sref}}" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-{{i.icon}}"></i> {{i.name}}</a></li>
+                <li ng-repeat="i in m.items"><a data-ui-sref-active="active" data-ui-sref="{{i.sref}}" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-{{i.icon}}"></i> {{i.name}}</a></li>
             </ul>
         </li>
-    </ul-->
+    </ul>
    
     <ul class="main-menu">
         
         <li data-ui-sref-active="active">
-            <a data-ui-sref="common.libs" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Libs</a>
+            <a data-ui-sref="common.libs" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Библиотеки</a>
         </li>
         
         <li data-ui-sref-active="active">
-            <a data-ui-sref="home" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Home</a>
+            <a data-ui-sref="common.panels" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Панели</a>
         </li>
         
         <li data-ui-sref-active="active">
-            <a data-ui-sref="common.custom" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-pocket"></i> Моё меню</a>
+            <a data-ui-sref="home" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Home</a>
+        </li>
+        
+        <li data-ui-sref-active="active">
+            <a data-ui-sref="common.custom" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-pocket"></i> Моё меню</a>
         </li>
         
         <li>
-            <a data-ui-sref="calendar" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-calendar"></i> Calendar</a>
+            <a data-ui-sref="calendar" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-calendar"></i> Calendar</a>
         </li>
         
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('headers') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('headers') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-view-compact"></i> Headers</a>
-
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="headers.textual-menu" data-ng-click="mactrl.sidebarStat($event)">Textual menu</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="headers.image-logo" data-ng-click="mactrl.sidebarStat($event)">Image logo</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="headers.mainmenu-on-top" data-ng-click="mactrl.sidebarStat($event)">Mainmenu on top</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="headers.textual-menu" data-ng-click="appctrl.sidebarStat($event)">Textual menu</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="headers.image-logo" data-ng-click="appctrl.sidebarStat($event)">Image logo</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="headers.mainmenu-on-top" data-ng-click="appctrl.sidebarStat($event)">Mainmenu on top</a></li>
             </ul>
         </li>
+        
         <li data-ui-sref-active="active">
-            <a data-ui-sref="typography" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-format-underlined"></i> Typography</a>
+            <a data-ui-sref="typography" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-format-underlined"></i> Typography</a>
         </li>
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('widgets') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('widgets') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-widgets"></i> Widgets</a>
 
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="widgets.widget-templates" data-ng-click="mactrl.sidebarStat($event)">Templates</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="widgets.widgets" data-ng-click="mactrl.sidebarStat($event)">Widgets</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="widgets.widget-templates" data-ng-click="appctrl.sidebarStat($event)">Templates</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="widgets.widgets" data-ng-click="appctrl.sidebarStat($event)">Widgets</a></li>
             </ul>
         </li>
         
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('tables') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('tables') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-view-list"></i> Tables</a>
 
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="tables.tables" data-ng-click="mactrl.sidebarStat($event)">Tables</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="tables.data-table" data-ng-click="mactrl.sidebarStat($event)">Data Tables</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="tables.tables" data-ng-click="appctrl.sidebarStat($event)">Tables</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="tables.data-table" data-ng-click="appctrl.sidebarStat($event)">Data Tables</a></li>
             </ul>
         </li>
         
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('form') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('form') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-collection-text"></i> Forms</a>
 
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="form.basic-form-elements" data-ng-click="mactrl.sidebarStat($event)">Basic Form Elements</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="form.form-components" data-ng-click="mactrl.sidebarStat($event)">Form Components</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="form.form-examples" data-ng-click="mactrl.sidebarStat($event)">Form Examples</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="form.form-validations" data-ng-click="mactrl.sidebarStat($event)">Form Validation</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="form.basic-form-elements" data-ng-click="appctrl.sidebarStat($event)">Basic Form Elements</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="form.form-components" data-ng-click="appctrl.sidebarStat($event)">Form Components</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="form.form-examples" data-ng-click="appctrl.sidebarStat($event)">Form Examples</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="form.form-validations" data-ng-click="appctrl.sidebarStat($event)">Form Validation</a></li>
             </ul>
         </li>
 
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('user-interface') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('user-interface') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-swap-alt"></i>User Interface</a>
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.ui-bootstrap" data-ng-click="mactrl.sidebarStat($event)">UI Bootstrap</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.colors" data-ng-click="mactrl.sidebarStat($event)">Colors</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.animations" data-ng-click="mactrl.sidebarStat($event)">Animations</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.box-shadow" data-ng-click="mactrl.sidebarStat($event)">Box Shadow</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.buttons" data-ng-click="mactrl.sidebarStat($event)">Buttons</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.icons" data-ng-click="mactrl.sidebarStat($event)">Icons</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.alerts" data-ng-click="mactrl.sidebarStat($event)">Alerts</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.preloaders" data-ng-click="mactrl.sidebarStat($event)">Preloaders</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.notifications-dialogs" data-ng-click="mactrl.sidebarStat($event)">Notifications & Dialogs</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.media" data-ng-click="mactrl.sidebarStat($event)">Media</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.other-components" data-ng-click="mactrl.sidebarStat($event)">Others</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.ui-bootstrap" data-ng-click="appctrl.sidebarStat($event)">UI Bootstrap</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.colors" data-ng-click="appctrl.sidebarStat($event)">Colors</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.animations" data-ng-click="appctrl.sidebarStat($event)">Animations</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.box-shadow" data-ng-click="appctrl.sidebarStat($event)">Box Shadow</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.buttons" data-ng-click="appctrl.sidebarStat($event)">Buttons</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.icons" data-ng-click="appctrl.sidebarStat($event)">Icons</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.alerts" data-ng-click="appctrl.sidebarStat($event)">Alerts</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.preloaders" data-ng-click="appctrl.sidebarStat($event)">Preloaders</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.notifications-dialogs" data-ng-click="appctrl.sidebarStat($event)">Notifications & Dialogs</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.media" data-ng-click="appctrl.sidebarStat($event)">Media</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="user-interface.other-components" data-ng-click="appctrl.sidebarStat($event)">Others</a></li>
             </ul>
         </li>
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('charts') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('charts') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-trending-up"></i>Charts</a>
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="charts.flot-charts" data-ng-click="mactrl.sidebarStat($event)">Flot Charts</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="charts.other-charts" data-ng-click="mactrl.sidebarStat($event)">Other Charts</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="charts.flot-charts" data-ng-click="appctrl.sidebarStat($event)">Flot Charts</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="charts.other-charts" data-ng-click="appctrl.sidebarStat($event)">Other Charts</a></li>
             </ul>
         </li>
 
         <li data-ui-sref-active="active">
-            <a data-ui-sref="calendar" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-calendar"></i> Calendar</a>
+            <a data-ui-sref="calendar" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-calendar"></i> Calendar</a>
         </li>
         
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('photo-gallery') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('photo-gallery') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-image"></i>Photo Gallery</a>
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="photo-gallery.photos" data-ng-click="mactrl.sidebarStat($event)">Default</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="photo-gallery.timeline" data-ng-click="mactrl.sidebarStat($event)">Timeline</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="photo-gallery.photos" data-ng-click="appctrl.sidebarStat($event)">Default</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="photo-gallery.timeline" data-ng-click="appctrl.sidebarStat($event)">Timeline</a></li>
             </ul>
         </li>
 
         
         <li data-ui-sref-active="active">
-            <a data-ui-sref="generic-classes" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-layers"></i> Generic Classes</a>
+            <a data-ui-sref="generic-classes" data-ng-click="appctrl.sidebarStat($event)"><i class="zmdi zmdi-layers"></i> Generic Classes</a>
         </li>
 
-        <li class="sub-menu" data-ng-class="{ 'active toggled': mactrl.$state.includes('pages') }">
+        <li class="sub-menu" data-ng-class="{ 'active toggled': appctrl.$state.includes('pages') }">
             <a href="" toggle-submenu><i class="zmdi zmdi-collection-item"></i> Sample Pages</a>
             <ul>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.profile.profile-about" data-ng-click="mactrl.sidebarStat($event)">Profile</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.listview" data-ng-click="mactrl.sidebarStat($event)">List View</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.messages" data-ng-click="mactrl.sidebarStat($event)">Messages</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.pricing-table" data-ng-click="mactrl.sidebarStat($event)">Pricing Table</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.contacts" data-ng-click="mactrl.sidebarStat($event)">Contacts</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.invoice" data-ng-click="mactrl.sidebarStat($event)">Invoice</a></li>
-                <li><a data-ui-sref-active="active" data-ui-sref="pages.wall" data-ng-click="mactrl.sidebarStat($event)">Wall</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.profile.profile-about" data-ng-click="appctrl.sidebarStat($event)">Profile</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.listview" data-ng-click="appctrl.sidebarStat($event)">List View</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.messages" data-ng-click="appctrl.sidebarStat($event)">Messages</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.pricing-table" data-ng-click="appctrl.sidebarStat($event)">Pricing Table</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.contacts" data-ng-click="appctrl.sidebarStat($event)">Contacts</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.invoice" data-ng-click="appctrl.sidebarStat($event)">Invoice</a></li>
+                <li><a data-ui-sref-active="active" data-ui-sref="pages.wall" data-ng-click="appctrl.sidebarStat($event)">Wall</a></li>
                 <li><a href="login.html">Login and Sign Up</a></li>
                 <li><a href="lockscreen.html">Lockscreen</a></li>
                 <li><a href="404.html">Error 404</a></li>

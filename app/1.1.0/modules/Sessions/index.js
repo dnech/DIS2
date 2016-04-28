@@ -82,7 +82,7 @@ module.exports = (function(){
 			}
 		};
 		
-        me.exist = function (ssid) {
+    me.exist = function (ssid) {
 			return (typeof sessions[ssid] !== 'undefined' && sessions[ssid].active) ? true : false;
 		};
         
@@ -134,18 +134,24 @@ module.exports = (function(){
     me.routerControl = function(req) {
 			req.ssid = req.cookies[me.config.cookie];
 			if (!me.exist(req.ssid)) {
-				return false;
+				console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||| 0:0');
+        return {session: false, authorized: false};
 			}
 			me.update(req.ssid);
 			me.setData(req.ssid, 'Connect', {agent: req.headers['user-agent'], ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress)});
-      return true;
+      console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||| 1:'+(me.getData(req.ssid, 'isAuth')) ? '1' : '0');
+      return {session: true, authorized: (me.getData(req.ssid, 'isAuth')) ? true : false};
 		};
     
 		me.routerCheck = function(req, res, next, url_init) {
-			if (me.routerControl(req)) {
+      if (me.routerControl(req).session) {
         return next();
       }
-      res.redirect(url_init);
+      if (url_init) {
+        res.redirect(url_init);
+      } else {
+        res.status(403).send('403 Forbidden');
+      }
 		};
 		
     

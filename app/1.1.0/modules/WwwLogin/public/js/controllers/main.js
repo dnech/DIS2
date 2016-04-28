@@ -3,7 +3,7 @@ appDIS
     // Base controller for common functions
     // =========================================================================
     
-    .controller('materialadminCtrl', function($timeout, $state, $scope, growlService){
+    .controller('AppCtrl', function($timeout, $state, $scope, growlService, WatchDog){
         //Welcome Message
         growlService.growl('Welcome back {{profileCtrl.fullName}}!', 'inverse')
         

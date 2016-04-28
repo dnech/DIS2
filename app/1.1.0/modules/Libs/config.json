@@ -3,7 +3,7 @@
 	"url":  "/libs/:type",
 	"ssid": "DIS_SSID",
 	"logger":{
-		"enable":true,
+		"enable":false,
 		"data":false,
 		"time":false,
 		"milliseconds":false,

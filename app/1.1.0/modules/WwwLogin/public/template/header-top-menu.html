@@ -257,10 +257,10 @@
 <nav class="ha-menu">
     <ul>
         <li class="waves-effect" data-ui-sref-active="active">
-            <a data-ui-sref="home" data-ng-click="mactrl.sidebarStat($event)">Home</a>
+            <a data-ui-sref="home" data-ng-click="appctrl.sidebarStat($event)">Home</a>
         </li>
 
-        <li class="dropdown" uib-dropdown data-ng-class="{ 'active': mactrl.$state.includes('headers') }">
+        <li class="dropdown" uib-dropdown data-ng-class="{ 'active': appctrl.$state.includes('headers') }">
             <div class="waves-effect" uib-dropdown-toggle>Headers</div>
 
             <ul class="dropdown-menu">
@@ -329,6 +329,6 @@
 <div class="skin-switch dropdown hidden-xs" uib-dropdown>
     <button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-palette"></i></button>
     <div class="dropdown-menu">
-        <span ng-repeat="w in mactrl.skinList" class="ss-skin bgm-{{ w }}" data-ng-click="mactrl.skinSwitch(w)"></span>
+        <span ng-repeat="w in appctrl.skinList" class="ss-skin bgm-{{ w }}" data-ng-click="appctrl.skinSwitch(w)"></span>
     </div>
 </div>

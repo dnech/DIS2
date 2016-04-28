@@ -1,1 +1,1 @@
-{"login":"admin","pass":"admin","isAdmin":true,"data":{},"active":true,"key":"41b36d2a-bac9-47e3-acf8-5ab6afa2cca1", "roles":["b8a3cdba-78d0-4e4c-b661-97bfe1d8ae06","54fbdf12-3a4a-43c2-bec3-1c99c0393a1f"]}
+{"login":"admin","pass":"admin","isAdmin":true,"data":{"image":"2.jpg", "name":"Администратор"},"active":true,"key":"41b36d2a-bac9-47e3-acf8-5ab6afa2cca1", "roles":["b8a3cdba-78d0-4e4c-b661-97bfe1d8ae06","54fbdf12-3a4a-43c2-bec3-1c99c0393a1f"]}

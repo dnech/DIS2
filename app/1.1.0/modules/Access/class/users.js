@@ -228,14 +228,24 @@ function Users(module, config) {
     
   /**
    *     
-   */ 
+   */
+  function getProfileData(user){
+    var data = user.format();
+    return {
+      active:  data.active,
+      login:   data.login,
+      isAdmin: data.isAdmin,
+      data:    data.data
+    };
+  } ;
+  
   me.profile = function(ssid, cb) {
     if (App.Sessions.exist(ssid)){
       var username = App.Sessions.getData(ssid, 'User');
       if (username) {
-        var user = me.Box.find('login', username);
+        var user = me.find('login', username);
         if (user) {
-          return cb(null, data);
+          return cb(null, getProfileData(user));
         } else {
           return cb([Errors['not_found']]);
         }    

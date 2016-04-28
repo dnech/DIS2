@@ -1,0 +1,1 @@
+{"enable":true,"script":false,"acl":"*","sandbox":"{}","src":"appDIS.factory('Direct', function() {\r\n return App.Direct || {};\r\n});  "}

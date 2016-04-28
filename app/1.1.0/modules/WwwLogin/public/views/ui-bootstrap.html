@@ -685,28 +685,28 @@
 
             <p>Add quick, dynamic tab functionality to transition through panes of local content, even via dropdown menus. <a target="_blank" href="http://angular-ui.github.io/bootstrap/#/tabs">Read more...</a></p>
 
-            <tabset>
-                <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+            <uib-tabset>
+                <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
                   {{tab.content}}
-                </tab>
-            </tabset>
+                </uib-tab>
+            </uib-tabset>
 
             <br/>
 
-            <tabset justified="true">
-                <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+            <uib-tabset justified="true">
+                <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
                   {{tab.content}}
-                </tab>
-            </tabset>
+                </uib-tab>
+            </uib-tabset>
 
             <br/>
             <br/>
 
-            <tabset vertical="true">
-                <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
+            <uib-tabset vertical="true">
+                <uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">
                   {{tab.content}}
-                </tab>
-            </tabset>
+                </uib-tab>
+            </uib-tabset>
 
 
         </div>

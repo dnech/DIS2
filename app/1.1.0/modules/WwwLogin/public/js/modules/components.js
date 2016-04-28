@@ -9,7 +9,7 @@ appDIS
             restrict: 'A',
             link: function(scope, element) {
                 $.simpleWeather({
-                    location: 'Austin, TX',
+                    location: 'Omsk, RU',
                     woeid: '',
                     unit: 'f',
                     success: function(weather) {

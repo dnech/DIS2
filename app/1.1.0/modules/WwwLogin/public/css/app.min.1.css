@@ -5439,11 +5439,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-right: 2px;
   line-height: 1.42857143;
   border: 1px solid transparent;
-  border-radius: 2px 2px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 
 .nav-tabs > li > a:hover {
-  border-color: #eeeeee #eeeeee #ffffff;
+  border-color: #eeeeee #eeeeee #eeeeee;
 }
 
 .nav-tabs > li.active > a,
@@ -5451,11 +5451,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-tabs > li.active > a:focus {
   color: #555555;
   background-color: transparent;
-  border: 1px solid #ffffff;
-  border-bottom-color: transparent;
+  /*border: 1px solid #ffffff;*/
+  border: 1px solid #aaaaaa;
+  /*border-bottom-color: transparent;*/
+  border-bottom-color: #ffffff;
   cursor: default;
 }
-
+  
 .nav-tabs.nav-justified {
   width: 100%;
   border-bottom: 0;
@@ -5488,7 +5490,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 
 .nav-tabs.nav-justified > li > a {
   margin-right: 0;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .nav-tabs.nav-justified > .active > a,
@@ -5500,13 +5502,14 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 @media (min-width: 768px) {
   .nav-tabs.nav-justified > li > a {
     border-bottom: 1px solid #dddddd;
-    border-radius: 2px 2px 0 0;
+    border-radius: 3px 3px 0 0;
   }
 
   .nav-tabs.nav-justified > .active > a,
   .nav-tabs.nav-justified > .active > a:hover,
   .nav-tabs.nav-justified > .active > a:focus {
-    border-bottom-color: #edecec;
+    /*border-bottom-color: #edecec;*/
+    border-bottom-color: #ffffff;
   }
 }
 

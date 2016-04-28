@@ -69,34 +69,53 @@ appDIS.controller('libsCtrl', function($scope) {
   
   $scope.tabs = []; 
 
-  $scope.addTab = function(name) {
+  $scope.addTab = function(name, type) {
     
-    var id;
+    var idx;
+    
+    console.log('addTab Start', name, id);
     
     $scope.tabs.forEach((item, i)=>{
-      if (name === item.name) {
-        id = i;
+      console.log('addTab forEach', item);
+      if (name === item.orig) {
+        idx = i;
       }
     });
-    
-    ???????????????????????????????
-    if (typeof id !== 'undefined') {
-      $scope.active = id+1;
+
+    if (typeof idx !== 'undefined') { 
+      $scope.tabs[idx].active = true;
+      console.log('addTab Finding Select', $scope.active);
       return;
     }
     
-    id = $scope.tabs.length;
-    initLib(id, name);
+    var id = $scope.tabs.length;
+    initLib(id, name, (type === 'system'));
     $scope.getData(id);
-    $scope.active = id+1;
-  };    
-   
-  // Библиотека
+    $scope.tabs[id].active = true;
+    console.log('addTab Finding New Tab', $scope.active);
+  }; 
+
+  $scope.closeTab = function(idx) {
+    console.log('closeTab ok', idx);
+    $scope.tabs.splice(idx, 1);
+  };
+
+  $scope.updateTab = function(idx) {
+    var name = $scope.tabs[idx].orig;
+    var ro = $scope.tabs[idx].ro;
+    initLib(idx, name, ro);
+    $scope.getData(idx);
+    $scope.tabs[idx].active = true;
+  };
   
-  function initLib(id, name) {
+  // Библиотека
+  function initLib(id, name, ro) {
     $scope.tabs[id] = {
       modifed: false,
+      protect: true,
+      orig:   name,
       name:   name,
+      ro:     ro,
       data:   {},
       error:   {},
       editors: {
@@ -120,16 +139,17 @@ appDIS.controller('libsCtrl', function($scope) {
       aceLoadedAcl: function(e) {$scope.aceLoaded(id, 'acl', e);},
       aceLoadedSb:  function(e) {$scope.aceLoaded(id, 'sandbox', e);},
       aceLoadedSrc: function(e) {$scope.aceLoaded(id, 'src', e);}
-    };  
+    };   
   };
   
   $scope.getData = function(id) {
     var lib = $scope.tabs[id];
-    App.Direct.AdminArea.Libs.get(lib.name, (err, data)=>{
+    App.Direct.AdminArea.Libs.get(lib.orig, (err, data)=>{
       $scope.$apply(function () {
         
         if (err) {
           lib.error = err;
+          growlService.growl('Error: '+err, 'inverse');
           console.error('libsCtrl.getLib', err);
           return; 
         }
@@ -138,7 +158,7 @@ appDIS.controller('libsCtrl', function($scope) {
         lib.data    = data;
         loadLib(id);
         
-        console.log('libsCtrl.getLib', lib.name);
+        console.log('libsCtrl.getLib', lib.orig);
       }); 
     });
   };
@@ -149,16 +169,34 @@ appDIS.controller('libsCtrl', function($scope) {
       $scope.$apply(function () {
         if (err) {
           lib.error = err;
+          growlService.growl('Error: '+err, 'inverse');
           console.error('libsCtrl.setData', err);
           return; 
         }
         lib.modifed = false;
+        lib.orig = lib.name;
         $scope.listUpdate();
         console.log('libsCtrl.setData', data);
       }); 
     });
   };
   
+  $scope.delData = function(id) {
+    var lib = $scope.tabs[id];
+    App.Direct.AdminArea.Libs.delete(lib.name, (err, data)=>{
+      $scope.$apply(function () {
+        if (err) {
+          lib.error = err;
+          growlService.growl('Error: '+err, 'inverse');
+          console.error('libsCtrl.delData', err);
+          return; 
+        }
+        $scope.closeTab(id);
+        $scope.listUpdate();
+        console.log('libsCtrl.delData', data);
+      }); 
+    });
+  };
   
   
   
@@ -199,6 +237,7 @@ appDIS.controller('libsCtrl', function($scope) {
   function saveLib(id) {
     var lib = $scope.tabs[id];
     return {
+      enable:  lib.data.enable,
       script:  lib.data.script,
       acl:     lib.editors.acl.editor.getValue(),
       sandbox: lib.editors.sandbox.editor.getValue(),

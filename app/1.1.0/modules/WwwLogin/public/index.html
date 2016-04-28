@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-    <!--[if IE 9 ]><html class="ie9" data-ng-app="appDIS" data-ng-controller="materialadminCtrl as mactrl"><![endif]-->
-    <![if IE 9 ]><html data-ng-app="appDIS" data-ng-controller="materialadminCtrl as mactrl"><![endif]>
+    <!--[if IE 9 ]><html class="ie9" data-ng-app="appDIS" data-ng-controller="AppCtrl as appctrl"><![endif]-->
+    <![if IE 9 ]><html data-ng-app="appDIS" data-ng-controller="AppCtrl as appctrl"><![endif]>
 
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Material Admin</title>
+        <title>DIS</title>
 
         <!-- Vendor CSS -->
         <link href="vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
         <link href="vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
         <link href="vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
-        <link href="vendors/bower_components/angular-loading-bar/src/loading-bar.css" rel="stylesheet">
+        <link href="vendors/bower_components/angular-loading-bar-0.9.0/loading-bar.css" rel="stylesheet">
         <link href="vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+        
 
         <!-- CSS -->
         <link href="css/app.min.1.css" rel="stylesheet" id="app-level">
         <link href="css/app.min.2.css" rel="stylesheet">
         <link href="css/demo.css" rel="stylesheet">
-
+        
+        <link href="lib/app.css" rel="stylesheet">
     </head>
 
-    <body data-ng-class="{ 'sw-toggled': mactrl.layoutType === '1'}">
+    <body data-ng-class="{ 'sw-toggled': appctrl.layoutType === '1'}">
 
         <data ui-view></data>
 
@@ -75,13 +77,13 @@
 
         <!-- Angular -->
         <!--script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script-->
-        <script src="vendors/bower_components/angular/angular.min.js"></script>
-        <script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
-        <script src="vendors/bower_components/angular-resource/angular-resource.min.js"></script>
+        <script src="vendors/bower_components/angular-1.5.5/angular.min.js"></script>
+        <script src="vendors/bower_components/angular-1.5.5/angular-animate.min.js"></script>
+        <script src="vendors/bower_components/angular-1.5.5/angular-resource.min.js"></script>
         
         <!-- Angular Modules -->
-        <script src="vendors/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-        <script src="vendors/bower_components/angular-loading-bar/src/loading-bar.js"></script>
+        <script src="vendors/bower_components/angular-ui-router-0.2.18/angular-ui-router.min.js"></script>
+        <script src="vendors/bower_components/angular-loading-bar-0.9.0/loading-bar.min.js"></script>
         <script src="vendors/bower_components/oclazyload/dist/ocLazyLoad.min.js"></script>
         <script src="vendors/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 
@@ -110,8 +112,13 @@
         <script src="vendors/bower_components/angular-nouislider/src/nouislider.min.js"></script>
         <script src="vendors/bower_components/ace-builds/src-min-noconflict/ace.js"></script>
         <script src="vendors/bower_components/angular-ui-ace/ui-ace.js"></script>
+        <script src="vendors/bower_components/angular-ui-tab-scroll/angular-ui-tab-scroll.js"></script>
         
-        <!-- App level -->
+        <!-- DIRECT -->
+        <script src="direct/api"></script>
+        <script src="lib/app.configurator"></script>
+        
+        <!--
         <script src="js/app.js"></script>
         <script src="js/config.js"></script>
         <script src="js/controllers/main.js"></script>
@@ -119,10 +126,17 @@
         <script src="js/templates.js"></script>
         <script src="js/controllers/ui-bootstrap.js"></script>
         <script src="js/controllers/table.js"></script>
-
+        -->
+        
         <!-- App custom -->
-        <script src="./direct/api"></script>
+        <!-- App level -->
+        
+        <!--
+        <script src="lib/configurator.runtime"></script>
         <script src="js/custom.js"></script>
+       
+        <script src="lib/configurator.runtime"></script>
+        -->
 
         <!-- Template Modules -->
         <script src="js/modules/template.js"></script>

@@ -1,0 +1,1 @@
+{"script":false,"acl":"*","sandbox":"{Test1: 'Hello1', Test2: 'Hello2'}","src":"Test Message1 {Test1}, and {Test2}..."}
